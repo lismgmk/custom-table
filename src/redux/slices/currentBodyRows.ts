@@ -1,8 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
 import {
   IData,
+  IFilters,
   // IFilters,
   INameColumns,
+  IResponse,
+  IRows,
   ISort,
 } from '../../components/dto/data.interface';
 import {
@@ -14,28 +17,57 @@ import {
 } from '../../components/helper';
 
 const initialState: {
-  allRows: IData[];
-  allFilteredRows: IData[];
-  // filters: IFilters;
-  filters: IData;
+  allRows: IData;
+  allFilteredRows: IData;
+  filters: IFilters;
+  // filters: IData;
   sort: ISort;
   activePage: number;
   rowsPerPage: number;
 } = {
-  allRows: [],
-  allFilteredRows: [],
+  allRows: {},
+  allFilteredRows: {},
   filters: {
-    id: '01',
-    delivery_date: '',
-    name: '',
-    status: 'active',
-    sum: 0,
-    qty: 0,
-    volume: 0,
-    currency: 'usd',
-    checked: false,
+    checked: {
+      label: 'Check',
+      type: 'checkbox',
+      checked: false,
+    },
+    delivery_date: {
+      label: 'Date',
+      searchValue: '',
+      type: 'search',
+    },
+    name: {
+      label: 'Name',
+      searchValue: '',
+      type: 'search',
+    },
+    sum: { label: 'Sum', searchValue: '', type: 'number' },
+    qty: { label: 'Quontity', searchValue: '', type: 'number' },
+    volume: {
+      label: 'Volume',
+      searchValue: '',
+      type: 'number',
+    },
+    currency: {
+      label: 'currency',
+      searchValue: '',
+      type: 'search',
+    },
+    status: {
+      label: 'status',
+      searchValue: '',
+      type: 'search',
+    },
+    all: {
+      label: 'all',
+      searchValue: '',
+      type: 'search',
+    },
   },
   sort: { order: 'asc', orderBy: 'delivery_date' },
+
   activePage: 1,
   rowsPerPage: 0,
 };
@@ -44,71 +76,108 @@ export const currentBodyRowsSlice = createSlice({
   name: 'currentBodyRows',
   initialState,
   reducers: {
-    setInitialRows: (state, action: { payload: IData[] }) => {
-      state.allRows = action.payload;
-      state.allFilteredRows = action.payload;
+    setInitialRows: (state, action: { payload: IResponse[] }) => {
+      const initialState: IData = {};
+      action.payload.forEach((el) => {
+        const all = `${el.qty * el.sum} ${el.currency}`;
+        initialState[el.id] = {
+          ...el,
+          checked: false,
+          all,
+        };
+      });
+      state.allRows = initialState;
+      state.allFilteredRows = initialState;
     },
 
     switchAllChecked: (state, action: { payload: { switch: boolean } }) => {
-      state.allFilteredRows = state.allFilteredRows.map((el) => ({
-        ...el,
-        checked: action.payload.switch,
-      }));
+      state.filters.checked.checked = action.payload.switch;
+      Object.keys(state.allFilteredRows).forEach((el) => {
+        state.allFilteredRows[el] = {
+          ...state.allFilteredRows[el],
+          checked: false,
+        };
+      });
     },
 
     switchOneChecked: (
       state,
       action: { payload: { switch: boolean; id: string } },
     ) => {
-      state.allFilteredRows = state.allFilteredRows.map((el) => {
-        if (el.id === action.payload.id) {
-          return { ...el, checked: action.payload.switch };
-        } else {
-          return el;
-        }
-      });
+      state.filters.checked.checked = false;
+      state.allFilteredRows[action.payload.id].checked = action.payload.switch;
     },
 
     filterRows: (
       state,
       action: {
         payload: {
-          id?: string;
-          status?: boolean;
-          sum?: number;
-          qty?: number;
-          volume?: number;
-          name?: string;
-          delivery_date?: string;
-          currency?: string;
+          [key in INameColumns]?: string;
+          // status?: boolean;
+          // sum?: number;
+          // qty?: number;
+          // volume?: number;
+          // name?: string;
+          // delivery_date?: string;
+          // currency?: string;
         };
       },
     ) => {
+      const payloadArr = Object.keys(action.payload);
       if (isEmpty(action.payload)) {
-        state.allRows;
+        state.allFilteredRows;
       } else {
-        state.allFilteredRows.filter((row) => {
-          return Object.keys(action.payload).every((accessor: INameColumns) => {
-            const value = row[accessor];
-            const searchValue = action.payload[accessor];
-
-            if (isStrings(value)) {
-              return toLower(value).includes(toLower(searchValue));
+        payloadArr.forEach((el: INameColumns) => {
+          state.filters[el].searchValue = action.payload[el];
+          // state.filters[el].serchValue = action.payload[el];
+        });
+        const filteredState: IData = {};
+        Object.entries(state.allFilteredRows).forEach(([rowKey, rowValue]) => {
+          payloadArr.forEach((item: INameColumns) => {
+            const value = rowValue[item];
+            const searchValue = action.payload[item];
+            // if (isStrings(value)) {
+            //   return toLower(value).includes(toLower(searchValue));
+            // }
+            if (toLower(value).includes(toLower(searchValue)) !== -1) {
+              filteredState[rowKey] = rowValue;
             }
 
-            if (isBoolean(value)) {
-              return (
-                (searchValue === 'true' && value) ||
-                (searchValue === 'false' && !value)
-              );
-            }
+            // if (isBoolean(value)) {
+            //   return (
+            //     (searchValue === 'true' && value) ||
+            //     (searchValue === 'false' && !value)
+            //   );
+            // }
 
-            if (isNumber(value)) {
-              return value == searchValue;
-            }
-            return false;
+            // if (isNumber(value)) {
+            //   return value == searchValue;
+            // }
           });
         });
+        state.allFilteredRows = filteredState;
+        // state.allFilteredRows.filter((row) => {
+        //   return Object.keys(action.payload).every((accessor: INameColumns) => {
+        //     const value = row[accessor];
+        //     const searchValue = action.payload[accessor];
+
+        //     if (isStrings(value)) {
+        //       return toLower(value).includes(toLower(searchValue));
+        //     }
+
+        //     if (isBoolean(value)) {
+        //       return (
+        //         (searchValue === 'true' && value) ||
+        //         (searchValue === 'false' && !value)
+        //       );
+        //     }
+
+        //     if (isNumber(value)) {
+        //       return value == searchValue;
+        //     }
+        //     return false;
+        //   });
+        // });
       }
     },
   },

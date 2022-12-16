@@ -1,6 +1,8 @@
 import React from 'react';
+import { useAppDispatch } from '../redux/hooks/reduxHooks';
+import { currentBodyRowsSlice } from '../redux/slices/currentBodyRows';
 import './Application.scss';
-import { IColumn, IData } from './dto/data.interface';
+import { IColumn, IData, IResponse } from './dto/data.interface';
 import Table from './Table';
 
 // const data: IData[] = [
@@ -52,7 +54,7 @@ const AppPage: React.FC = () => {
     // },
   ];
 
-  const rows: IData[] = [
+  const rows: IResponse[] = [
     {
       id: '1',
       status: 'active',
@@ -62,7 +64,6 @@ const AppPage: React.FC = () => {
       name: 'box1',
       delivery_date: new Date().getDate().toString(),
       currency: 'USD',
-      checked: false,
     },
     {
       id: '2',
@@ -73,7 +74,6 @@ const AppPage: React.FC = () => {
       name: 'box2',
       delivery_date: new Date().getDate().toString(),
       currency: 'USD',
-      checked: false,
     },
     {
       id: '3',
@@ -84,16 +84,16 @@ const AppPage: React.FC = () => {
       name: 'box',
       delivery_date: new Date().getDate().toString(),
       currency: 'RUB',
-      checked: false,
     },
   ];
-
+  const dispatch = useAppDispatch();
+  dispatch(currentBodyRowsSlice.actions.setInitialRows(rows));
   return (
     <div className='App'>
       <h1>Table</h1>
       <h2>Sorting, Filtering, Pagination</h2>
 
-      <Table rows={rows} columns={columns} />
+      <Table />
     </div>
   );
 };

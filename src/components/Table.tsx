@@ -1,85 +1,103 @@
 import React, { useMemo, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../redux/hooks/reduxHooks';
+import { useSelector } from 'react-redux';
+import { useAppDispatch } from '../redux/hooks/reduxHooks';
+import { currentBodyRowsSlice } from '../redux/slices/currentBodyRows';
+import { RootState } from '../redux/store';
 import { IColumn, IData } from './dto/data.interface';
-import { filterRows, sortRows, paginateRows } from './helper';
+import { filterRows, paginateRows, sortRows } from './helper';
 import Pagination from './Pagination';
 
-const Table = (props: { columns: IColumn[]; rows: IData[] }) => {
+const Table = () => {
   const dispatch = useAppDispatch();
-  const modalState = useAppSelector((state) => state.currentBodyRows);
+  const redux = useSelector((state: RootState) => state.currentBodyRows);
+  // console.log(rowsRedux.allFilteredRows, ';;;;;');
 
-  const { columns, rows } = props;
-  const [activePage, setActivePage] = useState(1);
-  const [filters, setFilters] = useState({});
-  const [sort, setSort] = useState({ order: 'asc', orderBy: 'id' });
-  const rowsPerPage = 3;
+  // const { columns, rows } = props;
+  // const [activePage, setActivePage] = useState(1);
+  // const [filters, setFilters] = useState({});
+  // const [sort, setSort] = useState({ order: 'asc', orderBy: 'id' });
+  // const rowsPerPage = 3;
 
-  const filteredRows = useMemo(
-    () => filterRows(rows, filters),
-    [rows, filters],
-  );
-  const sortedRows = useMemo(
-    () => sortRows(filteredRows, sort),
-    [filteredRows, sort],
-  );
-  const calculatedRows = paginateRows(sortedRows, activePage, rowsPerPage);
+  // const filteredRows = useMemo(
+  //   () => filterRows(rows, filters),
+  //   [rows, filters],
+  // );
+  // const sortedRows = useMemo(
+  //   () => sortRows(filteredRows, sort),
+  //   [filteredRows, sort],
+  // );
+  // const calculatedRows = paginateRows(sortedRows, activePage, rowsPerPage);
 
-  const count = filteredRows.length;
-  const totalPages = Math.ceil(count / rowsPerPage);
+  // const count = filteredRows.length;
+  // const totalPages = Math.ceil(count / rowsPerPage);
 
-  const handleSearch = (value: string, accessor: string) => {
-    setActivePage(1);
+  // const handleSearch = (value: string, accessor: string) => {
+  //   setActivePage(1);
 
-    if (value) {
-      setFilters((prevFilters) => ({
-        ...prevFilters,
-        [accessor]: value,
-      }));
-    } else {
-      setFilters((prevFilters) => {
-        const updatedFilters = { ...prevFilters };
-        // delete updatedFilters[accessor];
+  //   if (value) {
+  //     setFilters((prevFilters) => ({
+  //       ...prevFilters,
+  //       [accessor]: value,
+  //     }));
+  //   } else {
+  //     setFilters((prevFilters) => {
+  //       const updatedFilters = { ...prevFilters };
+  //       // delete updatedFilters[accessor];
 
-        return updatedFilters;
-      });
-    }
-  };
+  //       return updatedFilters;
+  //     });
+  //   }
+  // };
 
-  const handleSort = (accessor: any) => {
-    setActivePage(1);
-    setSort((prevSort) => ({
-      order:
-        prevSort.order === 'asc' && prevSort.orderBy === accessor
-          ? 'desc'
-          : 'asc',
-      orderBy: accessor,
-    }));
-  };
+  // const handleSort = (accessor: any) => {
+  //   setActivePage(1);
+  //   setSort((prevSort) => ({
+  //     order:
+  //       prevSort.order === 'asc' && prevSort.orderBy === accessor
+  //         ? 'desc'
+  //         : 'asc',
+  //     orderBy: accessor,
+  //   }));
+  // };
 
-  const clearAll = () => {
-    setSort({ order: 'asc', orderBy: 'id' });
-    setActivePage(1);
-    setFilters({});
-  };
+  // const clearAll = () => {
+  //   setSort({ order: 'asc', orderBy: 'id' });
+  //   setActivePage(1);
+  //   setFilters({});
+  // };
 
   return (
     <>
       <table>
         <thead>
           <tr>
-            <th>
-              <span>Check</span>
-              <input
-                type='checkbox'
-                name='check'
-                // checked={this.state.check}
-                onChange={(e) => {
-                  console.log(e);
-                }}
-              />
-            </th>
+            {Object.entries(redux.filters).map(([key, value], index) => {
+              return (
+                <th id={key} key={index}>
+                  <span>{value.label}</span>
+                  <th>
+                    <input
+                      type={value.type}
+                      placeholder={`Search ${value.label}`}
+                      value={value.searchValue}
+                      checked={value.checked}
+                      onChange={(event) =>
+                        dispatch(
+                          currentBodyRowsSlice.actions.filterRows({
+                            [key]: event.target.value,
+                          }),
+                        )
+                      }
+                    />
+                  </th>
 
-            {columns.map((column) => {
+                  {/* <button onClick={() => handleSort(column.accessor)}>
+                    {sortIcon()}
+                  </button> */}
+                </th>
+              );
+            })}
+            {/* {Object.entries(redux.filters).map((column) => {
               const sortIcon = () => {
                 if (column.accessor === sort.orderBy) {
                   if (sort.order === 'asc') {
@@ -98,10 +116,11 @@ const Table = (props: { columns: IColumn[]; rows: IData[] }) => {
                   </button>
                 </th>
               );
-            })}
+            })} */}
           </tr>
-          <tr>
+          {/* <tr>
             {columns.map((column, index: number) => {
+              // {columns.map((column, index: number) => {
               return (
                 <th key={index}>
                   <input
@@ -116,29 +135,32 @@ const Table = (props: { columns: IColumn[]; rows: IData[] }) => {
                 </th>
               );
             })}
-          </tr>
+          </tr> */}
         </thead>
         <tbody>
-          {calculatedRows.map((row) => {
+          {Object.entries(redux.allFilteredRows).map(([key, value], index) => {
             return (
-              <tr key={row.id}>
-                {columns.map((column: any) => {
-                  if (column.format) {
-                    return (
-                      <td key={column.accessor}>
-                        {column.format(row[column.accessor])}
-                      </td>
-                    );
-                  }
-                  return <td key={column.accessor}>{row[column.accessor]}</td>;
+              <tr id={key} key={key}>
+                {Object.values(value).map((el, index) => {
+                  return <td key={index + 100}>{el}</td>;
                 })}
               </tr>
             );
           })}
+          {/* 
+          {rowsRedux.allFilteredRows.map((row, index1: number) => {
+            return (
+              <tr key={index1}>
+                {Object.values(row).map((el, index) => {
+                  return <td key={index + 100}>{el}</td>;
+                })}
+              </tr>
+            );
+          })} */}
         </tbody>
       </table>
 
-      {count > 0 ? (
+      {/* {count > 0 ? (
         <Pagination
           activePage={activePage}
           count={count}
@@ -148,13 +170,13 @@ const Table = (props: { columns: IColumn[]; rows: IData[] }) => {
         />
       ) : (
         <p>No data found</p>
-      )}
+      )} */}
 
-      <div>
+      {/* <div>
         <p>
           <button onClick={clearAll}>Clear all</button>
         </p>
-      </div>
+      </div> */}
     </>
   );
 };

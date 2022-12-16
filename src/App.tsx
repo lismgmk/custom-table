@@ -5,9 +5,9 @@ import { store } from './redux/store';
 
 const App = () => {
   return (
-    <Provider store={store}>
+    <>
       <AppPage />
-    </Provider>
+    </>
   );
 };
 

@@ -1,9 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 import {
+  EnNameColumns,
   IData,
   IFilters,
   // IFilters,
-  INameColumns,
   IResponse,
   IRows,
   ISort,
@@ -15,6 +15,7 @@ import {
   isStrings,
   toLower,
 } from '../../components/helper';
+import { orderKey } from '../../components/helpers/orderHelper';
 
 const initialState: {
   allRows: IData;
@@ -33,11 +34,6 @@ const initialState: {
       type: 'checkbox',
       checked: false,
     },
-    delivery_date: {
-      label: 'Date',
-      searchValue: '',
-      type: 'search',
-    },
     name: {
       label: 'Name',
       searchValue: '',
@@ -50,13 +46,18 @@ const initialState: {
       searchValue: '',
       type: 'number',
     },
-    currency: {
-      label: 'currency',
+    status: {
+      label: 'status',
       searchValue: '',
       type: 'search',
     },
-    status: {
-      label: 'status',
+    delivery_date: {
+      label: 'Date',
+      searchValue: '',
+      type: 'search',
+    },
+    currency: {
+      label: 'currency',
       searchValue: '',
       type: 'search',
     },
@@ -77,11 +78,16 @@ export const currentBodyRowsSlice = createSlice({
   initialState,
   reducers: {
     setInitialRows: (state, action: { payload: IResponse[] }) => {
+      action.payload.sort((a, b) => {
+        return (
+          Number(new Date(a.delivery_date)) - Number(new Date(b.delivery_date))
+        );
+      });
       const initialState: IData = {};
       action.payload.forEach((el) => {
         const all = `${el.qty * el.sum} ${el.currency}`;
         initialState[el.id] = {
-          ...el,
+          ...orderKey(el),
           checked: false,
           all,
         };
@@ -112,7 +118,7 @@ export const currentBodyRowsSlice = createSlice({
       state,
       action: {
         payload: {
-          [key in INameColumns]?: string;
+          [key in EnNameColumns]?: string;
           // status?: boolean;
           // sum?: number;
           // qty?: number;
@@ -127,14 +133,14 @@ export const currentBodyRowsSlice = createSlice({
       if (isEmpty(action.payload)) {
         state.allFilteredRows;
       } else {
-        payloadArr.forEach((el: INameColumns) => {
+        payloadArr.forEach((el: keyof Omit<IRows, 'id'>) => {
           state.filters[el].searchValue = action.payload[el];
           // state.filters[el].serchValue = action.payload[el];
         });
         const filteredState: IData = {};
         Object.entries(state.allFilteredRows).forEach(([rowKey, rowValue]) => {
-          payloadArr.forEach((item: INameColumns) => {
-            const value = rowValue[item];
+          payloadArr.forEach((item: keyof Omit<IRows, 'id'>) => {
+            const value = rowValue[item as keyof IRows];
             const searchValue = action.payload[item];
             // if (isStrings(value)) {
             //   return toLower(value).includes(toLower(searchValue));

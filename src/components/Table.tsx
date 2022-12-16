@@ -141,8 +141,26 @@ const Table = () => {
           {Object.entries(redux.allFilteredRows).map(([key, value], index) => {
             return (
               <tr id={key} key={key}>
-                {Object.values(value).map((el, index) => {
-                  return <td key={index + 100}>{el}</td>;
+                {Object.entries(value).map(([key2, val2]) => {
+                  if (key2 === 'checked') {
+                    return (
+                      <input
+                        key={index + 12}
+                        type='checkbox'
+                        checked={val2}
+                        onChange={(event) =>
+                          dispatch(
+                            currentBodyRowsSlice.actions.filterRows({
+                              [key]: event.target.value,
+                            }),
+                          )
+                        }
+                      />
+                    );
+                  }
+                  if (key2 !== 'id') {
+                    return <td key={index + 100}>{val2}</td>;
+                  }
                 })}
               </tr>
             );

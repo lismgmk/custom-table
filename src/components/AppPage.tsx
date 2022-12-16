@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAppDispatch } from '../redux/hooks/reduxHooks';
 import { currentBodyRowsSlice } from '../redux/slices/currentBodyRows';
 import './Application.scss';
@@ -39,20 +39,20 @@ import Table from './Table';
 // ];
 
 const AppPage: React.FC = () => {
-  const columns: IColumn[] = [
-    { accessor: 'name', label: 'Name' },
-    { accessor: 'status', label: 'Status' },
-    { accessor: 'sum', label: 'Sum' },
-    { accessor: 'qty', label: 'Quantity' },
-    { accessor: 'volume', label: 'Volume' },
-    { accessor: 'delivery_date', label: 'Delivery date' },
-    { accessor: 'currency', label: 'Currency' },
-    // {
-    //   accessor: 'is_manager',
-    //   label: 'Manager',
-    //   // format: (value: any) => (value ? '✔️' : '✖️'),
-    // },
-  ];
+  // const columns: IColumn[] = [
+  //   { accessor: 'name', label: 'Name' },
+  //   { accessor: 'status', label: 'Status' },
+  //   { accessor: 'sum', label: 'Sum' },
+  //   { accessor: 'qty', label: 'Quantity' },
+  //   { accessor: 'volume', label: 'Volume' },
+  //   { accessor: 'delivery_date', label: 'Delivery date' },
+  //   { accessor: 'currency', label: 'Currency' },
+  //   // {
+  //   //   accessor: 'is_manager',
+  //   //   label: 'Manager',
+  //   //   // format: (value: any) => (value ? '✔️' : '✖️'),
+  //   // },
+  // ];
 
   const rows: IResponse[] = [
     {
@@ -82,12 +82,14 @@ const AppPage: React.FC = () => {
       qty: 10,
       volume: 1000,
       name: 'box',
-      delivery_date: new Date().getDate().toString(),
+      delivery_date: new Date().toString(),
       currency: 'RUB',
     },
   ];
   const dispatch = useAppDispatch();
-  dispatch(currentBodyRowsSlice.actions.setInitialRows(rows));
+  useEffect(() => {
+    dispatch(currentBodyRowsSlice.actions.setInitialRows(rows));
+  }, []);
   return (
     <div className='App'>
       <h1>Table</h1>

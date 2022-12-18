@@ -63,7 +63,7 @@ const AppPage: React.FC = () => {
 
   const rows: IResponse[] = [
     {
-      id: '1',
+      id: '111',
       status: 'active',
       sum: 5,
       qty: 10,
@@ -73,7 +73,7 @@ const AppPage: React.FC = () => {
       currency: 'USD',
     },
     {
-      id: '2',
+      id: '2222',
       status: 'active',
       sum: 5,
       qty: 10,
@@ -83,7 +83,7 @@ const AppPage: React.FC = () => {
       currency: 'USD',
     },
     {
-      id: '3',
+      id: '3fdfdf',
       status: 'active',
       sum: 5,
       qty: 10,

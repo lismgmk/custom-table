@@ -32,21 +32,28 @@ const Table = () => {
     dispatch(currentBodyRowsSlice.actions.filterRows(filters));
   }, [filters]);
 
-  const initialCheckBox = () => {
+  const initialCheckBox = (checked: boolean) => {
     const fullCheck: { [key: string]: boolean } = {};
-    Object.keys(redux.allFilteredRows).forEach((el) => {
-      fullCheck[el] = mainCheck;
+    Object.keys(allRows).forEach((el) => {
+      if (checked) {
+        fullCheck[el] = checked;
+      }
     });
     return fullCheck;
   };
 
+  useEffect(() => {
+    if (Object.keys(checkBoxOne).length === Object.keys(allRows).length) {
+      setMainCheck(true);
+    } else {
+      setMainCheck(false);
+    }
+  }, [checkBoxOne]);
+
   // useEffect(() => {
   //   setCheckBoxOne(initialCheckBox());
-  // }, [redux]);
-
-  useEffect(() => {
-    setCheckBoxOne(initialCheckBox());
-  }, [mainCheck]);
+  // }, [mainCheck]);
+  console.log(checkBoxOne, 'check');
 
   useEffect(() => {
     dispatch(currentBodyRowsSlice.actions.setFilter(checkBoxOne));
@@ -54,7 +61,8 @@ const Table = () => {
 
   const handlerMainCheck = useMemo(
     () => (checked: boolean) => {
-      setMainCheck(checked);
+      // setMainCheck(checked);
+      setCheckBoxOne(initialCheckBox(checked));
     },
     [],
   );
@@ -104,8 +112,7 @@ const Table = () => {
 
     setAllRows(iterableRows(redux.allFilteredRows));
   }, [redux.allFilteredRows]);
-  console.log();
-  
+
   return (
     <>
       <table>

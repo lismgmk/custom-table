@@ -18,7 +18,6 @@ const columns = [
 
 const Table = () => {
   const [allRows, setAllRows] = useState<IData>({});
-  // const [checkBoxOne, setCheckBoxOne] = useState<{ [key: string]: boolean }>(
   const [checkBoxOne, setCheckBoxOne] = useState<{
     [key: string]: { value: boolean; name: string };
   }>({});
@@ -113,7 +112,6 @@ const Table = () => {
     setAllRows(iterableRows(redux.allFilteredRows));
   }, [redux.allFilteredRows]);
 
-  console.log(redux.allFilteredRows, '!!rows', allRows);
   return (
     <>
       <table>

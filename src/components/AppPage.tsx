@@ -4,8 +4,11 @@ import { useAppDispatch } from '../redux/hooks/reduxHooks';
 import { currentBodyRowsSlice } from '../redux/slices/currentBodyRows';
 import { RootState } from '../redux/store';
 import './Application.scss';
+import './modal/styles/Modal.scss';
 import { IColumn, IData, IResponse } from './dto/data.interface';
 import { countEmont } from './helpers/countAmount';
+import useModal from './modal/hooks/modal.hook';
+import Modal from './modal/Modal';
 import Table from './Table';
 
 // const data: IData[] = [
@@ -107,7 +110,16 @@ const AppPage: React.FC = () => {
       sumQnt,
     }));
   }, [redux.allRows]);
-
+  const { isShowing, toggle } = useModal();
+  const smartClose = (param: string)=>{
+    if(param==='close'){
+      toggle()
+    }
+    if (param === 'closeUncheck') {
+      
+      toggle();
+    }
+  }
   return (
     <div className='App'>
       <h1>Table</h1>
@@ -116,6 +128,10 @@ const AppPage: React.FC = () => {
       <Table />
       <h3>Общее количесво : {resultValues.sumQnt}</h3>
       <h3>Общий объем : {resultValues.sumVolume}</h3>
+      <button className='button-default' onClick={toggle}>
+        Show Modal
+      </button>
+      <Modal isShowing={isShowing} hide={smartClose} />
     </div>
   );
 };

@@ -1,8 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useAppDispatch } from '../redux/hooks/reduxHooks';
 import { currentBodyRowsSlice } from '../redux/slices/currentBodyRows';
+import { RootState } from '../redux/store';
 import './Application.scss';
 import { IColumn, IData, IResponse } from './dto/data.interface';
+import { countEmont } from './helpers/countAmount';
 import Table from './Table';
 
 // const data: IData[] = [
@@ -39,6 +42,10 @@ import Table from './Table';
 // ];
 
 const AppPage: React.FC = () => {
+  const [resultValues, setResultValues] = useState<{
+    sumVolume: number;
+    sumQnt: number;
+  }>({ sumVolume: 0, sumQnt: 0 });
   // const columns: IColumn[] = [
   //   { accessor: 'name', label: 'Name' },
   //   { accessor: 'status', label: 'Status' },
@@ -87,15 +94,28 @@ const AppPage: React.FC = () => {
     },
   ];
   const dispatch = useAppDispatch();
+  const redux = useSelector((state: RootState) => state.currentBodyRows);
   useEffect(() => {
     dispatch(currentBodyRowsSlice.actions.setInitialRows(rows));
   }, []);
+
+  useEffect(() => {
+    const sumVolume = countEmont(redux.allRows, 'volume');
+    const sumQnt = countEmont(redux.allRows, 'qty');
+    setResultValues(() => ({
+      sumVolume,
+      sumQnt,
+    }));
+  }, [redux.allRows]);
+
   return (
     <div className='App'>
       <h1>Table</h1>
       <h2>Sorting, Filtering, Pagination</h2>
 
       <Table />
+      <h3>Общее количесво : {resultValues.sumQnt}</h3>
+      <h3>Общий объем : {resultValues.sumVolume}</h3>
     </div>
   );
 };

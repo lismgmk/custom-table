@@ -14,6 +14,7 @@ const columns = [
   { rowName: 'status', label: 'Status' },
   { rowName: 'delivery_date', label: 'Date' },
   { rowName: 'currency', label: 'Currency' },
+  { rowName: 'all', label: 'All' },
 ];
 
 const Table = () => {
@@ -27,8 +28,6 @@ const Table = () => {
   }>({});
   const [mainCheck, setMainCheck] = useState<boolean>(false);
   useEffect(() => {
-    console.log(filters, 'enter');
-
     dispatch(currentBodyRowsSlice.actions.filterRows(filters));
   }, [filters]);
 

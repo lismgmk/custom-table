@@ -18,16 +18,16 @@ import {
 import { orderKey } from '../../components/helpers/orderHelper';
 
 const initialState: {
-  allRows: IData;
-  allFilteredRows: IData;
+  allRows: IRows[];
+  allFilteredRows: IRows[];
   filters: { [key: string]: boolean };
   // filters: IData;
   // sort: ISort;
   // activePage: number;
   // rowsPerPage: number;
 } = {
-  allRows: {},
-  allFilteredRows: {},
+  allRows: [],
+  allFilteredRows: [],
   filters: {},
 };
 
@@ -41,10 +41,9 @@ export const currentBodyRowsSlice = createSlice({
           Number(new Date(a.delivery_date)) - Number(new Date(b.delivery_date))
         );
       });
-      const initialState: IData = {};
-      action.payload.forEach((el) => {
+      const initialState: IRows[] = action.payload.map((el) => {
         const all = `${el.qty * el.sum} ${el.currency}`;
-        initialState[el.id] = {
+        return {
           ...orderKey(el),
           all,
         };
@@ -66,61 +65,32 @@ export const currentBodyRowsSlice = createSlice({
       },
     ) => {
       const payloadArr = Object.keys(action.payload);
+
       if (Object.keys(action.payload).length === 0) {
         state.allFilteredRows = state.allRows;
       } else {
-        let filteredState: IData = {};
-        Object.entries(state.allRows).forEach(([rowKey, rowValue]) => {
-          payloadArr.forEach((item: keyof Omit<IRows, 'id'>) => {
-            const value = rowValue[item as keyof IRows];
+
+        state.allFilteredRows = [...state.allRows].filter((row) => {
+          return payloadArr.every((item: keyof Omit<IRows, 'id'>) => {
+            const value = row[item];
             const searchValue = action.payload[item];
 
             if (isStrings(value)) {
-              if (toLower(value).includes(toLower(searchValue))) {
-                filteredState[rowKey] = rowValue;
-              }
+              return toLower(value).includes(toLower(searchValue));
+
             }
             if (isNumber(value)) {
-              if (value.toString().includes(searchValue)) {
-                filteredState[rowKey] = rowValue;
-              } else {
-                filteredState = {};
-              }
+              // return value.toString().includes(searchValue);
+              // if (value.toString().includes(searchValue)) {
+              //   filteredState[rowKey] = rowValue;
+              // }
+              return value == searchValue;
+            } else {
+              return false;
             }
           });
         });
-        console.log(filteredState);
-
-        state.allFilteredRows = filteredState;
       }
-      // payloadArr.forEach((el: keyof Omit<IRows, 'id'>) => {
-      //   state.filters[el].searchValue = action.payload[el];
-      //   // state.filters[el].serchValue = action.payload[el];
-      // });
-
-      // state.allFilteredRows.filter((row) => {
-      //   return Object.keys(action.payload).every((accessor: INameColumns) => {
-      //     const value = row[accessor];
-      //     const searchValue = action.payload[accessor];
-
-      //     if (isStrings(value)) {
-      //       return toLower(value).includes(toLower(searchValue));
-      //     }
-
-      //     if (isBoolean(value)) {
-      //       return (
-      //         (searchValue === 'true' && value) ||
-      //         (searchValue === 'false' && !value)
-      //       );
-      //     }
-
-      //     if (isNumber(value)) {
-      //       return value == searchValue;
-      //     }
-      //     return false;
-      //   });
-      // });
-      // }
     },
   },
 });

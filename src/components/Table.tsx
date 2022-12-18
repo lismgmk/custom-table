@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { useAppDispatch } from '../redux/hooks/reduxHooks';
 import { currentBodyRowsSlice } from '../redux/slices/currentBodyRows';
 import { RootState } from '../redux/store';
-import { IRows } from './dto/data.interface';
+import { IData, IRows } from './dto/data.interface';
 
 const columns = [
   { rowName: 'name', label: 'Name' },
@@ -18,6 +18,7 @@ const columns = [
 ];
 
 const Table = () => {
+  const [allRows, setAllRows] = useState<IData>({});
   const [checkBoxOne, setCheckBoxOne] = useState<{ [key: string]: boolean }>(
     {},
   );
@@ -71,7 +72,6 @@ const Table = () => {
       });
     }
   };
-  console.log(checkBoxOne, 'checkbox');
 
   const handleSearch = (value: string, key: string) => {
     // setActivePage(1);
@@ -89,6 +89,23 @@ const Table = () => {
       });
     }
   };
+
+  const iterableRows = (allRows: IRows[]) => {
+    const initialState: IData = {};
+    allRows.forEach((el) => {
+      initialState[el.id] = {
+        ...el,
+      };
+    });
+    return initialState;
+  };
+  useEffect(() => {
+    console.log(redux.allFilteredRows, '!!rows', allRows);
+
+    setAllRows(iterableRows(redux.allFilteredRows));
+  }, [redux.allFilteredRows]);
+  console.log();
+  
   return (
     <>
       <table>
@@ -121,7 +138,54 @@ const Table = () => {
           </tr>
         </thead>
         <tbody>
-          {Object.entries(redux.allFilteredRows).map(([key, value]) => {
+          {/* {redux.allFilteredRows.map((el, index) => {
+            if (index === 0) {
+              return (
+                <td key={`${el.id}_checkbox`}>
+                  <input
+                    type='checkbox'
+                    checked={checkBoxOne[key]}
+                    onChange={(event) =>
+                      handlerOneCheck(event.target.checked, key)
+                    }
+                  />
+                </td>
+              );
+            }
+            return (
+              <tr
+                id={el.id}
+                key={`${el.id}_row`}
+                style={{ color: checkBoxOne[el.id] ? 'red' : 'black' }}
+              ></tr>
+            );
+          })} */}
+
+          {/* //   return (
+          //     <tr
+          //       id={el.id}
+          //       key={`${el.id}_row`}
+          //       style={{ color: checkBoxOne[el.id] ? 'red' : 'black' }}
+          //     >
+          //       {if(index===0){
+          //          return  <td key={`${key}_checkbox`}>
+          //               <input
+          //                 type='checkbox'
+          //                 checked={checkBoxOne[key]}
+          //                 onChange={(event) =>
+          //                   handlerOneCheck(event.target.checked, key)
+          //                 }
+          //               />
+          //             </td> 
+          //       }} else{
+          //          return <td key={`${key}_checkbox`}>{val2}</td>;
+          //       }}
+              
+          //     </tr>
+          //   );
+          // })} */}
+          {Object.entries(allRows).map(([key, value]) => {
+            // {Object.entries(redux.allFilteredRows).map(([key, value]) => {
             return (
               <tr
                 id={key}

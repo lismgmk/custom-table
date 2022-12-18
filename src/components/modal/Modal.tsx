@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import './styles/Modal.scss';
 
@@ -12,24 +12,12 @@ const Modal = ({
   reduxFilter: { [key: string]: { value: boolean; name: string } };
 }) => {
   const allValues = () => {
-    // const allId = Object.keys(reduxFilter);
-    // const result: { allId: string[]; allNames: string[] } = {
-    //   allId: [],
-    //   allNames: [],
-    // };
-    // const result: string[]=[]
     return Object.values(reduxFilter)
       .map((value) => {
-        // Object.entries(reduxFilter).forEach(([key, value]) => {
-        //   result.allId.push(key);
         return value.name;
       })
       .join(', ');
-    // return result;
   };
-  //   useEffect(()=>{
-
-  //   },[reduxFilter])
 
   return isShowing
     ? ReactDOM.createPortal(

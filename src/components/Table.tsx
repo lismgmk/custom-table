@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from '../redux/hooks/reduxHooks';
 import { currentBodyRowsSlice } from '../redux/slices/currentBodyRows';
@@ -18,9 +18,7 @@ const columns = [
 
 const Table = () => {
   const [allRows, setAllRows] = useState<IData>({});
-  // const [checkBoxOne, setCheckBoxOne] = useState<{
-  //   [key: string]: { value: boolean; name: string };
-  // }>({});
+
   const dispatch = useAppDispatch();
   const redux = useSelector((state: RootState) => state.currentBodyRows);
   const reduxMainCheckBox = useSelector(
@@ -32,52 +30,12 @@ const Table = () => {
   const [filters, setFilters] = useState<{
     [key: string]: string;
   }>({});
-  // const [mainCheck, setMainCheck] = useState<boolean>(false);
 
   useEffect(() => {
     dispatch(currentBodyRowsSlice.actions.filterRows(filters));
   }, [filters]);
 
-  const initialCheckBox = () => {
-    const fullCheck: { [key: string]: { value: boolean; name: string } } = {};
-
-    Object.entries(allRows).forEach(([key, value]) => {
-      if (reduxMainCheckBox) {
-        fullCheck[key] = { value: reduxMainCheckBox, name: value.name };
-      }
-      // if (mainCheck) {
-      //   fullCheck[key] = { value: mainCheck, name: value.name };
-      // }
-    });
-
-    return fullCheck;
-  };
-
-  // useMemo(() => {
-  //   // setCheckBoxOne(initialCheckBox());
-  //   dispatch(currentBodyRowsSlice.actions.setFilter(initialCheckBox()));
-  // }, [reduxMainCheckBox]);
-  // }, [mainCheck]);
-
-  // useEffect(() => {
-  //   // console.log(Object.keys(allRows).length, 'ssssssssss');
-  //   if (Object.keys(allRows).length === 0) {
-  //     setMainCheck(false);
-  //   } else if (
-  //     Object.keys(checkBoxOne).length === Object.keys(allRows).length
-  //   ) {
-  //     setMainCheck(true);
-  //   } else {
-  //     setMainCheck(false);
-  //   }
-  // }, [checkBoxOne, allRows]);
-
-  // useEffect(() => {
-  //   dispatch(currentBodyRowsSlice.actions.setFilter(checkBoxOne));
-  // }, [checkBoxOne]);
-
   const handlerMainCheck = (checked: boolean) => {
-    // setMainCheck(checked);
     dispatch(currentBodyRowsSlice.actions.setMainCheckBox(checked));
   };
 
@@ -89,17 +47,8 @@ const Table = () => {
           [key]: { value: checked, name },
         }),
       );
-      // setCheckBoxOne((previos) => ({
-      //   ...previos,
-      //   [key]: { value: checked, name },
-      // }));
     } else {
       dispatch(currentBodyRowsSlice.actions.setDisFilter(key));
-      // setCheckBoxOne((prevFilters) => {
-      //   const updatedFilters = { ...prevFilters };
-      //   delete updatedFilters[key];
-      //   return updatedFilters;
-      // });
     }
   };
 
@@ -131,7 +80,6 @@ const Table = () => {
   useEffect(() => {
     setAllRows(iterableRows(redux.allFilteredRows));
   }, [redux.allFilteredRows]);
-  console.log(reduxFilter, 'rrrrrrrrrrrr!!!!!', reduxMainCheckBox);
 
   return (
     <>
@@ -144,7 +92,6 @@ const Table = () => {
                 <input
                   type='checkbox'
                   checked={reduxMainCheckBox}
-                  // checked={mainCheck}
                   onChange={(event) => handlerMainCheck(event.target.checked)}
                 />
               </th>
@@ -171,7 +118,6 @@ const Table = () => {
               <tr
                 id={key}
                 key={`${key}_row`}
-                // style={{ color: checkBoxOne[key] ? 'red' : 'black' }}
                 style={{ color: reduxFilter[key] ? 'red' : 'black' }}
               >
                 {Object.entries(value).map(([key2, val2]) => {
@@ -181,7 +127,6 @@ const Table = () => {
                         <input
                           type='checkbox'
                           checked={
-                            // !checkBoxOne[key] ? false : checkBoxOne[key].value
                             !reduxFilter[key] ? false : reduxFilter[key].value
                           }
                           onChange={(event) =>

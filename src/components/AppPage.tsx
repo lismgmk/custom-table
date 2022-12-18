@@ -4,65 +4,18 @@ import { useAppDispatch } from '../redux/hooks/reduxHooks';
 import { currentBodyRowsSlice } from '../redux/slices/currentBodyRows';
 import { RootState } from '../redux/store';
 import './Application.scss';
-import './modal/styles/Modal.scss';
-import { IColumn, IData, IResponse } from './dto/data.interface';
+import { IResponse } from './dto/data.interface';
 import { countEmont } from './helpers/countAmount';
 import useModal from './modal/hooks/modal.hook';
 import Modal from './modal/Modal';
+import './modal/styles/Modal.scss';
 import Table from './Table';
-
-// const data: IData[] = [
-//   {
-//     id: '1',
-//     status: 'active',
-//     sum: 5,
-//     qty: 10,
-//     volume: 1000,
-//     name: 'box1',
-//     delivery_date: new Date().toString(),
-//     currency: 'USD',
-//   },
-//   {
-//     id: '2',
-//     status: 'active',
-//     sum: 5,
-//     qty: 10,
-//     volume: 1000,
-//     name: 'box2',
-//     delivery_date: new Date().toString(),
-//     currency: 'USD',
-//   },
-//   {
-//     id: '3',
-//     status: 'active',
-//     sum: 5,
-//     qty: 10,
-//     volume: 1000,
-//     name: 'box',
-//     delivery_date: new Date().toString(),
-//     currency: 'RUB',
-//   },
-// ];
 
 const AppPage: React.FC = () => {
   const [resultValues, setResultValues] = useState<{
     sumVolume: number;
     sumQnt: number;
   }>({ sumVolume: 0, sumQnt: 0 });
-  // const columns: IColumn[] = [
-  //   { accessor: 'name', label: 'Name' },
-  //   { accessor: 'status', label: 'Status' },
-  //   { accessor: 'sum', label: 'Sum' },
-  //   { accessor: 'qty', label: 'Quantity' },
-  //   { accessor: 'volume', label: 'Volume' },
-  //   { accessor: 'delivery_date', label: 'Delivery date' },
-  //   { accessor: 'currency', label: 'Currency' },
-  //   // {
-  //   //   accessor: 'is_manager',
-  //   //   label: 'Manager',
-  //   //   // format: (value: any) => (value ? '✔️' : '✖️'),
-  //   // },
-  // ];
 
   const rows: IResponse[] = [
     {
@@ -113,9 +66,6 @@ const AppPage: React.FC = () => {
   const { isShowing, toggle } = useModal();
 
   const smartClose = (options: { clear?: boolean; param?: boolean }) => {
-    // if (param === 'close') {
-    //   toggle();
-    // }
     if (options.clear) {
       dispatch(currentBodyRowsSlice.actions.setFilter({}));
       dispatch(currentBodyRowsSlice.actions.setMainCheckBox(false));

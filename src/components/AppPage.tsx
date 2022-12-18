@@ -118,12 +118,14 @@ const AppPage: React.FC = () => {
     // }
     if (options.clear) {
       dispatch(currentBodyRowsSlice.actions.setFilter({}));
+      dispatch(currentBodyRowsSlice.actions.setMainCheckBox(false));
     }
     if (options.param) {
       console.log('senddd');
 
       if (options.clear) {
         dispatch(currentBodyRowsSlice.actions.setFilter({}));
+        dispatch(currentBodyRowsSlice.actions.setMainCheckBox(false));
       }
     }
     toggle();

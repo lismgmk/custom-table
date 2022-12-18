@@ -23,13 +23,16 @@ const Table = () => {
   // }>({});
   const dispatch = useAppDispatch();
   const redux = useSelector((state: RootState) => state.currentBodyRows);
+  const reduxMainCheckBox = useSelector(
+    (state: RootState) => state.currentBodyRows.mainCheckBox,
+  );
   const reduxFilter = useSelector(
     (state: RootState) => state.currentBodyRows.filters,
   );
   const [filters, setFilters] = useState<{
     [key: string]: string;
   }>({});
-  const [mainCheck, setMainCheck] = useState<boolean>(false);
+  // const [mainCheck, setMainCheck] = useState<boolean>(false);
 
   useEffect(() => {
     dispatch(currentBodyRowsSlice.actions.filterRows(filters));
@@ -39,17 +42,22 @@ const Table = () => {
     const fullCheck: { [key: string]: { value: boolean; name: string } } = {};
 
     Object.entries(allRows).forEach(([key, value]) => {
-      if (mainCheck) {
-        fullCheck[key] = { value: mainCheck, name: value.name };
+      if (reduxMainCheckBox) {
+        fullCheck[key] = { value: reduxMainCheckBox, name: value.name };
       }
+      // if (mainCheck) {
+      //   fullCheck[key] = { value: mainCheck, name: value.name };
+      // }
     });
 
     return fullCheck;
   };
-  useMemo(() => {
-    // setCheckBoxOne(initialCheckBox());
-    dispatch(currentBodyRowsSlice.actions.setFilter(initialCheckBox()));
-  }, [mainCheck]);
+
+  // useMemo(() => {
+  //   // setCheckBoxOne(initialCheckBox());
+  //   dispatch(currentBodyRowsSlice.actions.setFilter(initialCheckBox()));
+  // }, [reduxMainCheckBox]);
+  // }, [mainCheck]);
 
   // useEffect(() => {
   //   // console.log(Object.keys(allRows).length, 'ssssssssss');
@@ -69,7 +77,8 @@ const Table = () => {
   // }, [checkBoxOne]);
 
   const handlerMainCheck = (checked: boolean) => {
-    setMainCheck(checked);
+    // setMainCheck(checked);
+    dispatch(currentBodyRowsSlice.actions.setMainCheckBox(checked));
   };
 
   const handlerOneCheck = (checked: boolean, key: string, name: string) => {
@@ -122,7 +131,7 @@ const Table = () => {
   useEffect(() => {
     setAllRows(iterableRows(redux.allFilteredRows));
   }, [redux.allFilteredRows]);
-  // console.log(reduxFilter, 'rrrrrrrrrrrr');
+  console.log(reduxFilter, 'rrrrrrrrrrrr!!!!!', reduxMainCheckBox);
 
   return (
     <>
@@ -134,7 +143,8 @@ const Table = () => {
               <th>
                 <input
                   type='checkbox'
-                  checked={mainCheck}
+                  checked={reduxMainCheckBox}
+                  // checked={mainCheck}
                   onChange={(event) => handlerMainCheck(event.target.checked)}
                 />
               </th>

@@ -16,12 +16,15 @@ import {
   toLower,
 } from '../../components/helper';
 import { orderKey } from '../../components/helpers/orderHelper';
-
+export interface IOneCheck {
+  [key: string]: { value: boolean; name: string };
+}
 const initialState: {
   allRows: IRows[];
   allFilteredRows: IRows[];
   // filters: { [key: string]: boolean };
-  filters: { [key: string]: { value: boolean; name: string } };
+  filters: IOneCheck;
+  mainCheckBox: boolean;
   // filters: IData;
   // sort: ISort;
   // activePage: number;
@@ -30,6 +33,7 @@ const initialState: {
   allRows: [],
   allFilteredRows: [],
   filters: {},
+  mainCheckBox: false,
 };
 
 export const currentBodyRowsSlice = createSlice({
@@ -59,21 +63,83 @@ export const currentBodyRowsSlice = createSlice({
     ) => {
       console.log(action.payload, 'redux');
 
+      // if (Object.keys(action.payload).length === 0) {
+      //   state.mainCheckBox = false;
+      // }
+      if (
+        Object.keys(action.payload).length ===
+        Object.keys(state.allFilteredRows).length
+      ) {
+        state.mainCheckBox = true;
+      } else {
+        state.mainCheckBox = false;
+      }
       state.filters = action.payload;
     },
 
     setDisFilter: (
       state,
-      action: { payload: string  },
+      action: { payload: string },
       // action: { payload: { [key: string]: { value: boolean; name: string } } },
     ) => {
       const updatedFilters = { ...state.filters };
       delete updatedFilters[action.payload];
-
+      // if (Object.keys(updatedFilters).length === 0) {
+      //   state.mainCheckBox = false;
+      // }
+      if (
+        Object.keys(updatedFilters).length ===
+        Object.keys(state.allFilteredRows).length
+      ) {
+        state.mainCheckBox = true;
+      }
+      // if (
+      //   Object.keys(updatedFilters).length ===
+      //   Object.keys(state.allFilteredRows).length
+      // ) {
+      //   state.mainCheckBox = true;
+      // }
+      else {
+        state.mainCheckBox = false;
+      }
       state.filters = updatedFilters;
     },
-    
-   
+
+    // checkMainCheckBox: (state, action: {payload: IOneCheck}) => {
+    //   // if (Object.keys(state.allFilteredRows).length === 0) {
+    //   //   state.mainCheckBox = false;
+    //   // } else
+    //   if (
+    //     Object.keys(action.payload).length ===
+    //     Object.keys(state.allFilteredRows).length
+    //   ) {
+    //     state.mainCheckBox = true;
+    //   } else {
+    //     state.mainCheckBox = false;
+    //   }
+    // },
+
+    setMainCheckBox: (state, action: { payload: boolean }) => {
+      const initialCheckBox = () => {
+        const fullCheck: { [key: string]: { value: boolean; name: string } } =
+          {};
+
+        state.allFilteredRows.forEach((el) => {
+          if (action.payload) {
+            fullCheck[el.id] = { value: action.payload, name: el.name };
+          }
+          // if (mainCheck) {
+          //   fullCheck[key] = { value: mainCheck, name: value.name };
+          // }
+        });
+
+        return fullCheck;
+      };
+      console.log(initialCheckBox(), 'cccccccccccc');
+
+      state.filters = initialCheckBox();
+      state.mainCheckBox = action.payload;
+    },
 
     filterRows: (
       state,

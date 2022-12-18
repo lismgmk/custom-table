@@ -1,200 +1,156 @@
-import React, { useMemo, useState } from 'react';
+import { nanoid } from 'nanoid';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from '../redux/hooks/reduxHooks';
 import { currentBodyRowsSlice } from '../redux/slices/currentBodyRows';
 import { RootState } from '../redux/store';
-import { IColumn, IData } from './dto/data.interface';
-import { filterRows, paginateRows, sortRows } from './helper';
-import Pagination from './Pagination';
+import { IRows } from './dto/data.interface';
+
+const columns = [
+  { rowName: 'name', label: 'Name' },
+  { rowName: 'sum', label: 'Sum' },
+  { rowName: 'qty', label: 'Quontity' },
+  { rowName: 'volume', label: 'Volume' },
+  { rowName: 'status', label: 'Status' },
+  { rowName: 'delivery_date', label: 'Date' },
+  { rowName: 'currency', label: 'Currency' },
+];
 
 const Table = () => {
+  const [checkBoxOne, setCheckBoxOne] = useState<{ [key: string]: boolean }>(
+    {},
+  );
   const dispatch = useAppDispatch();
   const redux = useSelector((state: RootState) => state.currentBodyRows);
-  // console.log(rowsRedux.allFilteredRows, ';;;;;');
+  const [filters, setFilters] = useState<{
+    [key: string]: string;
+  }>({});
+  const [mainCheck, setMainCheck] = useState<boolean>(false);
+  useEffect(() => {
+    console.log(filters, 'enter');
 
-  // const { columns, rows } = props;
-  // const [activePage, setActivePage] = useState(1);
-  // const [filters, setFilters] = useState({});
-  // const [sort, setSort] = useState({ order: 'asc', orderBy: 'id' });
-  // const rowsPerPage = 3;
+    dispatch(currentBodyRowsSlice.actions.filterRows(filters));
+  }, [filters]);
 
-  // const filteredRows = useMemo(
-  //   () => filterRows(rows, filters),
-  //   [rows, filters],
-  // );
-  // const sortedRows = useMemo(
-  //   () => sortRows(filteredRows, sort),
-  //   [filteredRows, sort],
-  // );
-  // const calculatedRows = paginateRows(sortedRows, activePage, rowsPerPage);
+  const initialCheckBox = () => {
+    const fullCheck: { [key: string]: boolean } = {};
+    Object.keys(redux.allFilteredRows).forEach((el) => {
+      fullCheck[el] = mainCheck;
+    });
+    return fullCheck;
+  };
 
-  // const count = filteredRows.length;
-  // const totalPages = Math.ceil(count / rowsPerPage);
+  // useEffect(() => {
+  //   setCheckBoxOne(initialCheckBox());
+  // }, [redux]);
 
-  // const handleSearch = (value: string, accessor: string) => {
-  //   setActivePage(1);
+  useEffect(() => {
+    setCheckBoxOne(initialCheckBox());
+  }, [mainCheck]);
 
-  //   if (value) {
-  //     setFilters((prevFilters) => ({
-  //       ...prevFilters,
-  //       [accessor]: value,
-  //     }));
-  //   } else {
-  //     setFilters((prevFilters) => {
-  //       const updatedFilters = { ...prevFilters };
-  //       // delete updatedFilters[accessor];
+  useEffect(() => {
+    dispatch(currentBodyRowsSlice.actions.setFilter(checkBoxOne));
+  }, [checkBoxOne]);
 
-  //       return updatedFilters;
-  //     });
-  //   }
-  // };
+  const handlerMainCheck = useMemo(
+    () => (checked: boolean) => {
+      setMainCheck(checked);
+    },
+    [],
+  );
+  const handlerOneCheck = (checked: boolean, key: string) => {
+    if (checked) {
+      setCheckBoxOne((previos) => ({
+        ...previos,
+        [key]: checked,
+      }));
+    } else {
+      setCheckBoxOne((prevFilters) => {
+        const updatedFilters = { ...prevFilters };
+        delete updatedFilters[key];
+        return updatedFilters;
+      });
+    }
+  };
+  console.log(checkBoxOne, 'checkbox');
 
-  // const handleSort = (accessor: any) => {
-  //   setActivePage(1);
-  //   setSort((prevSort) => ({
-  //     order:
-  //       prevSort.order === 'asc' && prevSort.orderBy === accessor
-  //         ? 'desc'
-  //         : 'asc',
-  //     orderBy: accessor,
-  //   }));
-  // };
+  const handleSearch = (value: string, key: string) => {
+    // setActivePage(1);
 
-  // const clearAll = () => {
-  //   setSort({ order: 'asc', orderBy: 'id' });
-  //   setActivePage(1);
-  //   setFilters({});
-  // };
-
+    if (value) {
+      setFilters((prevFilters) => ({
+        ...prevFilters,
+        [key]: value,
+      }));
+    } else {
+      setFilters((prevFilters) => {
+        const updatedFilters = { ...prevFilters };
+        delete updatedFilters[key];
+        return updatedFilters;
+      });
+    }
+  };
   return (
     <>
       <table>
         <thead>
           <tr>
-            {Object.entries(redux.filters).map(([key, value], index) => {
+            <th>
+              <span>Checked</span>
+              <th>
+                <input
+                  type='checkbox'
+                  checked={mainCheck}
+                  onChange={(event) => handlerMainCheck(event.target.checked)}
+                />
+              </th>
+            </th>
+            {columns.map((column) => {
               return (
-                <th id={key} key={index}>
-                  <span>{value.label}</span>
-                  <th>
-                    <input
-                      type={value.type}
-                      placeholder={`Search ${value.label}`}
-                      value={value.searchValue}
-                      checked={value.checked}
-                      onChange={(event) =>
-                        dispatch(
-                          currentBodyRowsSlice.actions.filterRows({
-                            [key]: event.target.value,
-                          }),
-                        )
-                      }
-                    />
-                  </th>
-
-                  {/* <button onClick={() => handleSort(column.accessor)}>
-                    {sortIcon()}
-                  </button> */}
-                </th>
-              );
-            })}
-            {/* {Object.entries(redux.filters).map((column) => {
-              const sortIcon = () => {
-                if (column.accessor === sort.orderBy) {
-                  if (sort.order === 'asc') {
-                    return '⬆️';
-                  }
-                  return '⬇️';
-                } else {
-                  return '️↕️';
-                }
-              };
-              return (
-                <th key={column.accessor}>
-                  <span>{column.label}</span>
-                  <button onClick={() => handleSort(column.accessor)}>
-                    {sortIcon()}
-                  </button>
-                </th>
-              );
-            })} */}
-          </tr>
-          {/* <tr>
-            {columns.map((column, index: number) => {
-              // {columns.map((column, index: number) => {
-              return (
-                <th key={index}>
+                <th key={column.rowName}>
                   <input
-                    key={`${column.accessor}-search`}
                     type='search'
                     placeholder={`Search ${column.label}`}
-                    // value={filters[column.accessor]}
+                    value={filters[column.rowName]}
                     onChange={(event) =>
-                      handleSearch(event.target.value, column.accessor)
+                      handleSearch(event.target.value, column.rowName)
                     }
                   />
                 </th>
               );
             })}
-          </tr> */}
+          </tr>
         </thead>
         <tbody>
-          {Object.entries(redux.allFilteredRows).map(([key, value], index) => {
+          {Object.entries(redux.allFilteredRows).map(([key, value]) => {
             return (
-              <tr id={key} key={key}>
+              <tr
+                id={key}
+                key={`${key}_row`}
+                style={{ color: checkBoxOne[key] ? 'red' : 'black' }}
+              >
                 {Object.entries(value).map(([key2, val2]) => {
-                  if (key2 === 'checked') {
+                  if (key2 === 'id') {
                     return (
-                      <input
-                        key={index + 12}
-                        type='checkbox'
-                        checked={val2}
-                        onChange={(event) =>
-                          dispatch(
-                            currentBodyRowsSlice.actions.filterRows({
-                              [key]: event.target.value,
-                            }),
-                          )
-                        }
-                      />
+                      <td key={`${key}_checkbox`}>
+                        <input
+                          type='checkbox'
+                          checked={checkBoxOne[key]}
+                          onChange={(event) =>
+                            handlerOneCheck(event.target.checked, key)
+                          }
+                        />
+                      </td>
                     );
-                  }
-                  if (key2 !== 'id') {
-                    return <td key={index + 100}>{val2}</td>;
+                  } else {
+                    return <td key={`${key}_checkbox`}>{val2}</td>;
                   }
                 })}
               </tr>
             );
           })}
-          {/* 
-          {rowsRedux.allFilteredRows.map((row, index1: number) => {
-            return (
-              <tr key={index1}>
-                {Object.values(row).map((el, index) => {
-                  return <td key={index + 100}>{el}</td>;
-                })}
-              </tr>
-            );
-          })} */}
         </tbody>
       </table>
-
-      {/* {count > 0 ? (
-        <Pagination
-          activePage={activePage}
-          count={count}
-          rowsPerPage={rowsPerPage}
-          totalPages={totalPages}
-          setActivePage={setActivePage}
-        />
-      ) : (
-        <p>No data found</p>
-      )} */}
-
-      {/* <div>
-        <p>
-          <button onClick={clearAll}>Clear all</button>
-        </p>
-      </div> */}
     </>
   );
 };

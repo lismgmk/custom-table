@@ -22,7 +22,6 @@ export interface IRows {
   name?: string;
   delivery_date?: string;
   currency?: string;
-  checked?: boolean;
   all?: string;
 }
 
@@ -31,7 +30,6 @@ export interface IData {
 }
 
 export enum EnNameColumns {
-  checked = 'checked',
   name = 'name',
   sum = 'sum',
   qty = 'qty',

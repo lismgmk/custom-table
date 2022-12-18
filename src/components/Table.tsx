@@ -1,4 +1,3 @@
-import { nanoid } from 'nanoid';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from '../redux/hooks/reduxHooks';
@@ -19,58 +18,62 @@ const columns = [
 
 const Table = () => {
   const [allRows, setAllRows] = useState<IData>({});
-  const [checkBoxOne, setCheckBoxOne] = useState<{ [key: string]: boolean }>(
-    {},
-  );
+  // const [checkBoxOne, setCheckBoxOne] = useState<{ [key: string]: boolean }>(
+  const [checkBoxOne, setCheckBoxOne] = useState<{
+    [key: string]: { value: boolean; name: string };
+  }>({});
   const dispatch = useAppDispatch();
   const redux = useSelector((state: RootState) => state.currentBodyRows);
   const [filters, setFilters] = useState<{
     [key: string]: string;
   }>({});
   const [mainCheck, setMainCheck] = useState<boolean>(false);
+
   useEffect(() => {
     dispatch(currentBodyRowsSlice.actions.filterRows(filters));
   }, [filters]);
 
-  const initialCheckBox = (checked: boolean) => {
-    const fullCheck: { [key: string]: boolean } = {};
-    Object.keys(allRows).forEach((el) => {
-      if (checked) {
-        fullCheck[el] = checked;
+  const initialCheckBox = () => {
+    const fullCheck: { [key: string]: { value: boolean; name: string } } = {};
+
+    Object.entries(allRows).forEach(([key, value]) => {
+      if (mainCheck) {
+        fullCheck[key] = { value: mainCheck, name: value.name };
       }
     });
+
     return fullCheck;
   };
-
-  useEffect(() => {
-    if (Object.keys(checkBoxOne).length === Object.keys(allRows).length) {
-      setMainCheck(true);
-    } else {
-      setMainCheck(false);
-    }
-  }, [checkBoxOne]);
+  useMemo(() => {
+    setCheckBoxOne(initialCheckBox());
+  }, [mainCheck]);
 
   // useEffect(() => {
-  //   setCheckBoxOne(initialCheckBox());
-  // }, [mainCheck]);
-  console.log(checkBoxOne, 'check');
+  //   // console.log(Object.keys(allRows).length, 'ssssssssss');
+  //   if (Object.keys(allRows).length === 0) {
+  //     setMainCheck(false);
+  //   } else if (
+  //     Object.keys(checkBoxOne).length === Object.keys(allRows).length
+  //   ) {
+  //     setMainCheck(true);
+  //   } else {
+  //     setMainCheck(false);
+  //   }
+  // }, [checkBoxOne, allRows]);
 
   useEffect(() => {
     dispatch(currentBodyRowsSlice.actions.setFilter(checkBoxOne));
   }, [checkBoxOne]);
 
-  const handlerMainCheck = useMemo(
-    () => (checked: boolean) => {
-      // setMainCheck(checked);
-      setCheckBoxOne(initialCheckBox(checked));
-    },
-    [],
-  );
-  const handlerOneCheck = (checked: boolean, key: string) => {
+  const handlerMainCheck = (checked: boolean) => {
+    setMainCheck(checked);
+  };
+
+  const handlerOneCheck = (checked: boolean, key: string, name: string) => {
     if (checked) {
       setCheckBoxOne((previos) => ({
         ...previos,
-        [key]: checked,
+        [key]: { value: checked, name },
       }));
     } else {
       setCheckBoxOne((prevFilters) => {
@@ -82,8 +85,6 @@ const Table = () => {
   };
 
   const handleSearch = (value: string, key: string) => {
-    // setActivePage(1);
-
     if (value) {
       setFilters((prevFilters) => ({
         ...prevFilters,
@@ -107,12 +108,12 @@ const Table = () => {
     });
     return initialState;
   };
-  useEffect(() => {
-    console.log(redux.allFilteredRows, '!!rows', allRows);
 
+  useEffect(() => {
     setAllRows(iterableRows(redux.allFilteredRows));
   }, [redux.allFilteredRows]);
 
+  console.log(redux.allFilteredRows, '!!rows', allRows);
   return (
     <>
       <table>
@@ -145,54 +146,7 @@ const Table = () => {
           </tr>
         </thead>
         <tbody>
-          {/* {redux.allFilteredRows.map((el, index) => {
-            if (index === 0) {
-              return (
-                <td key={`${el.id}_checkbox`}>
-                  <input
-                    type='checkbox'
-                    checked={checkBoxOne[key]}
-                    onChange={(event) =>
-                      handlerOneCheck(event.target.checked, key)
-                    }
-                  />
-                </td>
-              );
-            }
-            return (
-              <tr
-                id={el.id}
-                key={`${el.id}_row`}
-                style={{ color: checkBoxOne[el.id] ? 'red' : 'black' }}
-              ></tr>
-            );
-          })} */}
-
-          {/* //   return (
-          //     <tr
-          //       id={el.id}
-          //       key={`${el.id}_row`}
-          //       style={{ color: checkBoxOne[el.id] ? 'red' : 'black' }}
-          //     >
-          //       {if(index===0){
-          //          return  <td key={`${key}_checkbox`}>
-          //               <input
-          //                 type='checkbox'
-          //                 checked={checkBoxOne[key]}
-          //                 onChange={(event) =>
-          //                   handlerOneCheck(event.target.checked, key)
-          //                 }
-          //               />
-          //             </td> 
-          //       }} else{
-          //          return <td key={`${key}_checkbox`}>{val2}</td>;
-          //       }}
-              
-          //     </tr>
-          //   );
-          // })} */}
           {Object.entries(allRows).map(([key, value]) => {
-            // {Object.entries(redux.allFilteredRows).map(([key, value]) => {
             return (
               <tr
                 id={key}
@@ -205,9 +159,15 @@ const Table = () => {
                       <td key={`${key}_checkbox`}>
                         <input
                           type='checkbox'
-                          checked={checkBoxOne[key]}
+                          checked={
+                            !checkBoxOne[key] ? false : checkBoxOne[key].value
+                          }
                           onChange={(event) =>
-                            handlerOneCheck(event.target.checked, key)
+                            handlerOneCheck(
+                              event.target.checked,
+                              key,
+                              value.name,
+                            )
                           }
                         />
                       </td>

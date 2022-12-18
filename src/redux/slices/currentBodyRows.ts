@@ -20,7 +20,8 @@ import { orderKey } from '../../components/helpers/orderHelper';
 const initialState: {
   allRows: IRows[];
   allFilteredRows: IRows[];
-  filters: { [key: string]: boolean };
+  // filters: { [key: string]: boolean };
+  filters: { [key: string]: { value: boolean; name: string } };
   // filters: IData;
   // sort: ISort;
   // activePage: number;
@@ -52,7 +53,10 @@ export const currentBodyRowsSlice = createSlice({
       state.allFilteredRows = initialState;
     },
 
-    setFilter: (state, action: { payload: { [key: string]: boolean } }) => {
+    setFilter: (
+      state,
+      action: { payload: { [key: string]: { value: boolean; name: string } } },
+    ) => {
       state.filters = action.payload;
     },
 
@@ -69,7 +73,6 @@ export const currentBodyRowsSlice = createSlice({
       if (Object.keys(action.payload).length === 0) {
         state.allFilteredRows = state.allRows;
       } else {
-
         state.allFilteredRows = [...state.allRows].filter((row) => {
           return payloadArr.every((item: keyof Omit<IRows, 'id'>) => {
             const value = row[item];
@@ -77,7 +80,6 @@ export const currentBodyRowsSlice = createSlice({
 
             if (isStrings(value)) {
               return toLower(value).includes(toLower(searchValue));
-
             }
             if (isNumber(value)) {
               // return value.toString().includes(searchValue);

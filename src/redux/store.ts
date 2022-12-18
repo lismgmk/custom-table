@@ -1,6 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { currentBodyRowsSlice } from './slices/currentBodyRows';
-import { filterSystemSlice } from './slices/filterSystem';
 
 
 export const store = configureStore({

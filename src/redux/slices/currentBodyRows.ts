@@ -72,6 +72,8 @@ export const currentBodyRowsSlice = createSlice({
 
       state.filters = updatedFilters;
     },
+    
+   
 
     filterRows: (
       state,

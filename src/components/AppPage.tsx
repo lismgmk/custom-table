@@ -111,15 +111,26 @@ const AppPage: React.FC = () => {
     }));
   }, [redux.allRows]);
   const { isShowing, toggle } = useModal();
-  const smartClose = (param: string)=>{
-    if(param==='close'){
-      toggle()
+
+  const smartClose = (options: { clear?: boolean; param?: boolean }) => {
+    // if (param === 'close') {
+    //   toggle();
+    // }
+    if (options.clear) {
+      dispatch(currentBodyRowsSlice.actions.setFilter({}));
     }
-    if (param === 'closeUncheck') {
-      
-      toggle();
+    if (options.param) {
+      console.log('senddd');
+
+      if (options.clear) {
+        dispatch(currentBodyRowsSlice.actions.setFilter({}));
+      }
     }
-  }
+    toggle();
+  };
+  const reduxFilter = useSelector(
+    (state: RootState) => state.currentBodyRows.filters,
+  );
   return (
     <div className='App'>
       <h1>Table</h1>
@@ -131,7 +142,11 @@ const AppPage: React.FC = () => {
       <button className='button-default' onClick={toggle}>
         Show Modal
       </button>
-      <Modal isShowing={isShowing} hide={smartClose} />
+      <Modal
+        reduxFilter={reduxFilter}
+        isShowing={isShowing}
+        hide={smartClose}
+      />
     </div>
   );
 };

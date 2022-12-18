@@ -57,7 +57,20 @@ export const currentBodyRowsSlice = createSlice({
       state,
       action: { payload: { [key: string]: { value: boolean; name: string } } },
     ) => {
+      console.log(action.payload, 'redux');
+
       state.filters = action.payload;
+    },
+
+    setDisFilter: (
+      state,
+      action: { payload: string  },
+      // action: { payload: { [key: string]: { value: boolean; name: string } } },
+    ) => {
+      const updatedFilters = { ...state.filters };
+      delete updatedFilters[action.payload];
+
+      state.filters = updatedFilters;
     },
 
     filterRows: (

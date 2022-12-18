@@ -18,11 +18,14 @@ const columns = [
 
 const Table = () => {
   const [allRows, setAllRows] = useState<IData>({});
-  const [checkBoxOne, setCheckBoxOne] = useState<{
-    [key: string]: { value: boolean; name: string };
-  }>({});
+  // const [checkBoxOne, setCheckBoxOne] = useState<{
+  //   [key: string]: { value: boolean; name: string };
+  // }>({});
   const dispatch = useAppDispatch();
   const redux = useSelector((state: RootState) => state.currentBodyRows);
+  const reduxFilter = useSelector(
+    (state: RootState) => state.currentBodyRows.filters,
+  );
   const [filters, setFilters] = useState<{
     [key: string]: string;
   }>({});
@@ -44,7 +47,8 @@ const Table = () => {
     return fullCheck;
   };
   useMemo(() => {
-    setCheckBoxOne(initialCheckBox());
+    // setCheckBoxOne(initialCheckBox());
+    dispatch(currentBodyRowsSlice.actions.setFilter(initialCheckBox()));
   }, [mainCheck]);
 
   // useEffect(() => {
@@ -60,9 +64,9 @@ const Table = () => {
   //   }
   // }, [checkBoxOne, allRows]);
 
-  useEffect(() => {
-    dispatch(currentBodyRowsSlice.actions.setFilter(checkBoxOne));
-  }, [checkBoxOne]);
+  // useEffect(() => {
+  //   dispatch(currentBodyRowsSlice.actions.setFilter(checkBoxOne));
+  // }, [checkBoxOne]);
 
   const handlerMainCheck = (checked: boolean) => {
     setMainCheck(checked);
@@ -70,16 +74,23 @@ const Table = () => {
 
   const handlerOneCheck = (checked: boolean, key: string, name: string) => {
     if (checked) {
-      setCheckBoxOne((previos) => ({
-        ...previos,
-        [key]: { value: checked, name },
-      }));
+      dispatch(
+        currentBodyRowsSlice.actions.setFilter({
+          ...reduxFilter,
+          [key]: { value: checked, name },
+        }),
+      );
+      // setCheckBoxOne((previos) => ({
+      //   ...previos,
+      //   [key]: { value: checked, name },
+      // }));
     } else {
-      setCheckBoxOne((prevFilters) => {
-        const updatedFilters = { ...prevFilters };
-        delete updatedFilters[key];
-        return updatedFilters;
-      });
+      dispatch(currentBodyRowsSlice.actions.setDisFilter(key));
+      // setCheckBoxOne((prevFilters) => {
+      //   const updatedFilters = { ...prevFilters };
+      //   delete updatedFilters[key];
+      //   return updatedFilters;
+      // });
     }
   };
 
@@ -111,6 +122,7 @@ const Table = () => {
   useEffect(() => {
     setAllRows(iterableRows(redux.allFilteredRows));
   }, [redux.allFilteredRows]);
+  // console.log(reduxFilter, 'rrrrrrrrrrrr');
 
   return (
     <>
@@ -149,7 +161,8 @@ const Table = () => {
               <tr
                 id={key}
                 key={`${key}_row`}
-                style={{ color: checkBoxOne[key] ? 'red' : 'black' }}
+                // style={{ color: checkBoxOne[key] ? 'red' : 'black' }}
+                style={{ color: reduxFilter[key] ? 'red' : 'black' }}
               >
                 {Object.entries(value).map(([key2, val2]) => {
                   if (key2 === 'id') {
@@ -158,7 +171,8 @@ const Table = () => {
                         <input
                           type='checkbox'
                           checked={
-                            !checkBoxOne[key] ? false : checkBoxOne[key].value
+                            // !checkBoxOne[key] ? false : checkBoxOne[key].value
+                            !reduxFilter[key] ? false : reduxFilter[key].value
                           }
                           onChange={(event) =>
                             handlerOneCheck(

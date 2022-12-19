@@ -9,7 +9,7 @@ export function isNumber(value: any) {
 }
 
 export function isDate(value: string | number) {
-  return isValid(value);
+  return !Number.isNaN(new Date(value).getTime());
 }
 
 export function toDateUI(value: string | number) {

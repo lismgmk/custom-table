@@ -1,12 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { isDate } from 'date-fns';
 import {
   EnNameColumns,
   IResponse,
   IRows,
 } from '../../global-dto/data.interface';
 import { orderKey } from '../../helpers/orderHelper';
-import { isNumber, isStrings, toDateUI, toLower } from '../../helpers/utils';
+import { isDate, isNumber, isStrings, toDateUI, toLower } from '../../helpers/utils';
 
 export interface IOneCheck {
   [key: string]: { value: boolean; name: string };
@@ -110,7 +109,6 @@ export const currentBodyRowsSlice = createSlice({
             const value = row[item];
             const searchValue = action.payload[item];
 
-            // if (isDate(new Date(value))) {
             if (isDate(value)) {
               return toDateUI(value).includes(searchValue);
             }

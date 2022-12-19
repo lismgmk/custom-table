@@ -7,6 +7,7 @@ import { IData, IRows } from '../../global-dto/data.interface';
 import { toDateUI } from '../../helpers/utils';
 import { columns } from './const-data/column';
 import { v4 as uuid } from 'uuid';
+import Select from 'react-select';
 
 const Table = () => {
   const [allRows, setAllRows] = useState<IData>({});
@@ -47,6 +48,9 @@ const Table = () => {
   };
 
   const handleSearch = (value: string, key: string) => {
+    if (key === 'status') {
+      setSelectedOption(value);
+    }
     if (value) {
       setFilters((prevFilters) => ({
         ...prevFilters,
@@ -75,7 +79,12 @@ const Table = () => {
   useEffect(() => {
     setAllRows(iterableRows(reduxRows));
   }, [reduxRows]);
-
+  const options = [
+    { value: '', label: 'all' },
+    { value: 'active', label: 'active' },
+    { value: 'archive', label: 'archive' },
+  ];
+  const [selectedOption, setSelectedOption] = useState(null);
   return (
     <>
       <table>
@@ -90,6 +99,20 @@ const Table = () => {
               />
             </th>
             {columns.map((column) => {
+              if (column.rowName === 'status') {
+                return (
+                  <th key={column.id}>
+                    <Select
+                      placeholder={'select status'}
+                      defaultValue={selectedOption}
+                      onChange={(event) => {
+                        handleSearch(event.value, column.rowName);
+                      }}
+                      options={options}
+                    />
+                  </th>
+                );
+              }
               return (
                 <th key={column.id}>
                   <span>{column.label}</span>

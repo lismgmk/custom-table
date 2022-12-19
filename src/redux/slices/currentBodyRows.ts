@@ -5,7 +5,13 @@ import {
   IRows,
 } from '../../global-dto/data.interface';
 import { orderKey } from '../../helpers/orderHelper';
-import { isDate, isNumber, isStrings, toDateUI, toLower } from '../../helpers/utils';
+import {
+  isDate,
+  isNumber,
+  isStrings,
+  toDateUI,
+  toLower,
+} from '../../helpers/utils';
 
 export interface IOneCheck {
   [key: string]: { value: boolean; name: string };
@@ -108,16 +114,14 @@ export const currentBodyRowsSlice = createSlice({
           return payloadArr.every((item: keyof Omit<IRows, 'id'>) => {
             const value = row[item];
             const searchValue = action.payload[item];
-
+            if (isNumber(value)) {
+              return value == searchValue;
+            }
             if (isDate(value)) {
               return toDateUI(value).includes(searchValue);
             }
             if (isStrings(value)) {
               return toLower(value).includes(toLower(searchValue));
-            }
-
-            if (isNumber(value)) {
-              return value == searchValue;
             } else {
               return false;
             }

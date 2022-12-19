@@ -110,7 +110,8 @@ export const currentBodyRowsSlice = createSlice({
             const value = row[item];
             const searchValue = action.payload[item];
 
-            if (isDate(new Date(value))) {
+            // if (isDate(new Date(value))) {
+            if (isDate(value)) {
               return toDateUI(value).includes(searchValue);
             }
             if (isStrings(value)) {

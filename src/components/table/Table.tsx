@@ -5,17 +5,8 @@ import { currentBodyRowsSlice } from '../../redux/slices/currentBodyRows';
 import { RootState } from '../../redux/store';
 import { IData, IRows } from '../../global-dto/data.interface';
 import { toDateUI } from '../../helpers/utils';
-
-const columns = [
-  { rowName: 'name', label: 'Наименование' },
-  { rowName: 'sum', label: 'Сумма' },
-  { rowName: 'qty', label: 'Количество' },
-  { rowName: 'volume', label: 'Объем' },
-  { rowName: 'status', label: 'Статус' },
-  { rowName: 'delivery_date', label: 'Дата доставки' },
-  { rowName: 'currency', label: 'Валюта' },
-  { rowName: 'all', label: 'Всего' },
-];
+import { columns } from './const-data/column';
+import { v4 as uuid } from 'uuid';
 
 const Table = () => {
   const [allRows, setAllRows] = useState<IData>({});
@@ -98,7 +89,7 @@ const Table = () => {
             </th>
             {columns.map((column) => {
               return (
-                <th key={column.rowName}>
+                <th key={column.id}>
                   <span>{column.label}</span>
                   <input
                     type='search'
@@ -118,13 +109,13 @@ const Table = () => {
             return (
               <tr
                 id={key}
-                key={`${key}_row`}
+                key={uuid()}
                 style={{ color: reduxFilter[key] ? 'red' : 'black' }}
               >
                 {Object.entries(value).map(([key2, val2]) => {
                   if (key2 === 'id') {
                     return (
-                      <td key={`${key}_checkbox`}>
+                      <td key={uuid()}>
                         <input
                           type='checkbox'
                           checked={
@@ -141,7 +132,7 @@ const Table = () => {
                       </td>
                     );
                   } else {
-                    return <td key={`${key}_checkbox`}>{val2}</td>;
+                    return <td key={uuid()}>{val2}</td>;
                   }
                 })}
               </tr>

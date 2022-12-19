@@ -19,72 +19,36 @@ const AppPage: React.FC = () => {
     sumQnt: number;
   }>({ sumVolume: 0, sumQnt: 0 });
 
-  // const [data, loading, error] = useFetch();
+  const [fetchData, setFetchData] = useState<{
+    data: IResponse[];
+    loading: boolean;
+  }>({ data: null, loading: null });
 
-  // const rows: IResponse[] = [
-  //   {
-  //     id: '111',
-  //     status: 'active',
-  //     sum: 5,
-  //     qty: 10,
-  //     volume: 1000,
-  //     name: 'box1',
-  //     delivery_date: new Date().getDate().toString(),
-  //     currency: 'USD',
-  //   },
-  //   {
-  //     id: '2222',
-  //     status: 'active',
-  //     sum: 5,
-  //     qty: 10,
-  //     volume: 1000,
-  //     name: 'box2',
-  //     delivery_date: new Date().getDate().toString(),
-  //     currency: 'USD',
-  //   },
-  //   {
-  //     id: '3fdfdf',
-  //     status: 'active',
-  //     sum: 5,
-  //     qty: 10,
-  //     volume: 1000,
-  //     name: 'box',
-  //     delivery_date: new Date().toString(),
-  //     currency: 'RUB',
-  //   },
-  // ];
-
-  const [states, setStates] = useState<IResponse[]>();
   const urls: string[] = [
     'http://localhost:3000/documents1',
     'http://localhost:3000/documents2',
   ];
 
-  const fet = async () => {
+  const getData = async () => {
     const requests = urls.map((url) => fetch(url));
     const responses = await Promise.all(requests);
     const promises = responses.map((response) => response.json());
     const data = await Promise.all(promises);
-    const r = data.flat();
-    console.log(r, 'cccccccccccccccccc');
-
-    setStates(r);
+    const result = data.flat();
+    setFetchData({ data: result, loading: false });
   };
-  // fet();
   useEffect(() => {
-    fet();
+    setFetchData({ data: null, loading: true });
+    getData();
   }, []);
   const dispatch = useAppDispatch();
   const redux = useSelector((state: RootState) => state.currentBodyRows);
-  console.log(states, 'dddd++++');
 
   useEffect(() => {
-    if (states && states.length > 0) {
-      console.log('!!!!!!!!!!!!!!!', states);
-
-      dispatch(currentBodyRowsSlice.actions.setInitialRows(states));
+    if (fetchData.data && fetchData.data.length > 0) {
+      dispatch(currentBodyRowsSlice.actions.setInitialRows(fetchData.data));
     }
-  }, [states]);
+  }, [fetchData.data]);
 
   useEffect(() => {
     const sumVolume = countEmont(redux.allRows, 'volume');
@@ -116,24 +80,18 @@ const AppPage: React.FC = () => {
     (state: RootState) => state.currentBodyRows.filters,
   );
 
-  // if (loading || !data) {
-  //   return <div>loading...</div>;
-  // }
-
-  // if (error) {
-  //   return <div>{error}</div>;
-  // }
+  if (fetchData.loading || !fetchData.data) {
+    return <div>loading...</div>;
+  }
 
   return (
     <div className='App'>
-      <h1>Table</h1>
-      <h2>Sorting, Filtering, Pagination</h2>
-
+      <h1>Таблица товаров</h1>
       <Table />
       <h3>Общее количесво : {resultValues.sumQnt}</h3>
       <h3>Общий объем : {resultValues.sumVolume}</h3>
       <button className='button-default' onClick={toggle}>
-        Show Modal
+        Аннулировать
       </button>
       <Modal
         reduxFilter={reduxFilter}

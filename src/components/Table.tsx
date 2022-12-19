@@ -5,16 +5,17 @@ import { useAppDispatch } from '../redux/hooks/reduxHooks';
 import { currentBodyRowsSlice } from '../redux/slices/currentBodyRows';
 import { RootState } from '../redux/store';
 import { IData, IRows } from './dto/data.interface';
+import { toDateUI } from './helper';
 
 const columns = [
-  { rowName: 'name', label: 'Name' },
-  { rowName: 'sum', label: 'Sum' },
-  { rowName: 'qty', label: 'Quontity' },
-  { rowName: 'volume', label: 'Volume' },
-  { rowName: 'status', label: 'Status' },
-  { rowName: 'delivery_date', label: 'Date' },
-  { rowName: 'currency', label: 'Currency' },
-  { rowName: 'all', label: 'All' },
+  { rowName: 'name', label: 'Наименование' },
+  { rowName: 'sum', label: 'Сумма' },
+  { rowName: 'qty', label: 'Количество' },
+  { rowName: 'volume', label: 'Объем' },
+  { rowName: 'status', label: 'Статус' },
+  { rowName: 'delivery_date', label: 'Дата доставки' },
+  { rowName: 'currency', label: 'Валюта' },
+  { rowName: 'all', label: 'Всего' },
 ];
 
 const Table = () => {
@@ -73,14 +74,14 @@ const Table = () => {
     allRows.forEach((el) => {
       initialState[el.id] = {
         ...el,
-        delivery_date: format(new Date(el.delivery_date), 'MM/dd/yyyy'),
+        delivery_date: toDateUI(el.delivery_date),
       };
     });
     return initialState;
   };
 
   useEffect(() => {
-      setAllRows(iterableRows(redux.allFilteredRows));
+    setAllRows(iterableRows(redux.allFilteredRows));
   }, [redux.allFilteredRows]);
 
   return (
@@ -89,12 +90,12 @@ const Table = () => {
         <thead>
           <tr>
             <th>
-              <span>Checked</span>
-                <input
-                  type='checkbox'
-                  checked={reduxMainCheckBox}
-                  onChange={(event) => handlerMainCheck(event.target.checked)}
-                />
+              <span>Выбрать</span>
+              <input
+                type='checkbox'
+                checked={reduxMainCheckBox}
+                onChange={(event) => handlerMainCheck(event.target.checked)}
+              />
             </th>
             {columns.map((column) => {
               return (

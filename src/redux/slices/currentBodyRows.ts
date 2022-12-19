@@ -4,7 +4,13 @@ import {
   IResponse,
   IRows,
 } from '../../components/dto/data.interface';
-import { isNumber, isStrings, toLower } from '../../components/helper';
+import {
+  isDate,
+  isNumber,
+  isStrings,
+  toDateUI,
+  toLower,
+} from '../../components/helper';
 import { orderKey } from '../../components/helpers/orderHelper';
 export interface IOneCheck {
   [key: string]: { value: boolean; name: string };
@@ -26,7 +32,6 @@ export const currentBodyRowsSlice = createSlice({
   initialState,
   reducers: {
     setInitialRows: (state, action: { payload: IResponse[] }) => {
-      console.log(action.payload, 'aaact');
 
       action.payload.sort((a, b) => {
         return (
@@ -109,10 +114,15 @@ export const currentBodyRowsSlice = createSlice({
           return payloadArr.every((item: keyof Omit<IRows, 'id'>) => {
             const value = row[item];
             const searchValue = action.payload[item];
-
+            console.log(action, isDate(value));
+            
+            if (isDate(value)) {
+              return toDateUI(value).includes(searchValue);
+            }
             if (isStrings(value)) {
               return toLower(value).includes(toLower(searchValue));
             }
+
             if (isNumber(value)) {
               return value == searchValue;
             } else {

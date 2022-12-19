@@ -6,7 +6,7 @@ import {
   IRows,
 } from '../../global-dto/data.interface';
 import { orderKey } from '../../helpers/orderHelper';
-import { toDateUI, isStrings, toLower, isNumber } from '../../helpers/utils';
+import { isNumber, isStrings, toDateUI, toLower } from '../../helpers/utils';
 
 export interface IOneCheck {
   [key: string]: { value: boolean; name: string };
@@ -110,7 +110,7 @@ export const currentBodyRowsSlice = createSlice({
             const value = row[item];
             const searchValue = action.payload[item];
 
-            if (isDate(value)) {
+            if (isDate(new Date(value))) {
               return toDateUI(value).includes(searchValue);
             }
             if (isStrings(value)) {

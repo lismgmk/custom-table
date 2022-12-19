@@ -26,6 +26,8 @@ export const currentBodyRowsSlice = createSlice({
   initialState,
   reducers: {
     setInitialRows: (state, action: { payload: IResponse[] }) => {
+      console.log(action.payload, 'aaact');
+
       action.payload.sort((a, b) => {
         return (
           Number(new Date(a.delivery_date)) - Number(new Date(b.delivery_date))

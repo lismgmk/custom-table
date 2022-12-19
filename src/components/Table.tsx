@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from '../redux/hooks/reduxHooks';
@@ -72,13 +73,14 @@ const Table = () => {
     allRows.forEach((el) => {
       initialState[el.id] = {
         ...el,
+        delivery_date: format(new Date(el.delivery_date), 'MM/dd/yyyy'),
       };
     });
     return initialState;
   };
 
   useEffect(() => {
-    setAllRows(iterableRows(redux.allFilteredRows));
+      setAllRows(iterableRows(redux.allFilteredRows));
   }, [redux.allFilteredRows]);
 
   return (
@@ -88,17 +90,16 @@ const Table = () => {
           <tr>
             <th>
               <span>Checked</span>
-              <th>
                 <input
                   type='checkbox'
                   checked={reduxMainCheckBox}
                   onChange={(event) => handlerMainCheck(event.target.checked)}
                 />
-              </th>
             </th>
             {columns.map((column) => {
               return (
                 <th key={column.rowName}>
+                  <span>{column.label}</span>
                   <input
                     type='search'
                     placeholder={`Search ${column.label}`}

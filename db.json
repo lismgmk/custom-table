@@ -1,0 +1,86 @@
+{
+  "documents1": [
+    {
+      "id": "11-idd",
+      "status": "active",
+      "sum": 5,
+      "qty": 10,
+      "volume": 1000,
+      "name": "box1",
+      "delivery_date": "Mon Dec 19 2022 00:42:46 GMT+0300 (Moscow Standard Time)",
+      "currency": "USD"
+    },
+    {
+      "id": "d1-idd",
+      "status": "active",
+      "sum": 5,
+      "qty": 10,
+      "volume": 1000,
+      "name": "box1",
+      "delivery_date": "Mon Dec 19 2021 00:42:46 GMT+0300 (Moscow Standard Time)",
+      "currency": "USD"
+    },
+    {
+      "id": "1dddd-id",
+      "status": "active",
+      "sum": 5,
+      "qty": 10,
+      "volume": 1000,
+      "name": "box1",
+      "delivery_date": "Mon Dec 19 2020 00:42:46 GMT+0300 (Moscow Standard Time)",
+      "currency": "USD"
+    },
+    {
+      "id": "1dddd1-id",
+      "status": "active",
+      "sum": 5,
+      "qty": 10,
+      "volume": 1000,
+      "name": "box1",
+      "delivery_date": "Mon Dec 19 2020 00:42:46 GMT+0300 (Moscow Standard Time)",
+      "currency": "USD"
+    }
+  ],
+  "documents2": [
+    {
+      "id": "1551-id",
+      "status": "archive",
+      "sum": 523,
+      "qty": 1320,
+      "volume": 3200,
+      "name": "box1",
+      "delivery_date": "Mon Dec 19 2022 00:42:46 GMT+0300 (Moscow Standard Time)",
+      "currency": "USD"
+    },
+    {
+      "id": "5959d1-id",
+      "status": "active",
+      "sum": 4546,
+      "qty": 65,
+      "volume": 1560,
+      "name": "box1",
+      "delivery_date": "Mon Dec 19 2021 00:42:46 GMT+0300 (Moscow Standard Time)",
+      "currency": "USD"
+    },
+    {
+      "id": "1d61fdfd15d-id",
+      "status": "archive",
+      "sum": 565,
+      "qty": 98,
+      "volume": 90,
+      "name": "box1",
+      "delivery_date": "Mon Dec 19 2020 00:42:46 GMT+0300 (Moscow Standard Time)",
+      "currency": "RUB"
+    },
+    {
+      "id": "1d5dfd6565d1-id",
+      "status": "archive",
+      "sum": 565,
+      "qty": 45,
+      "volume": 56,
+      "name": "box1",
+      "delivery_date": "Mon Dec 19 2015 00:42:46 GMT+0300 (Moscow Standard Time)",
+      "currency": "USD"
+    }
+  ]
+}

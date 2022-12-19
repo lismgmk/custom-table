@@ -5,13 +5,13 @@ import { currentBodyRowsSlice } from '../../redux/slices/currentBodyRows';
 import { RootState } from '../../redux/store';
 import { IData, IRows } from '../../global-dto/data.interface';
 import { toDateUI } from '../../helpers/utils';
-import { columns } from './const-data/column';
+import { columns, options } from './const-data/column';
 import { v4 as uuid } from 'uuid';
-import Select from 'react-select';
 
 const Table = () => {
   const [allRows, setAllRows] = useState<IData>({});
-  const [selectedOption, setSelectedOption] = useState(null);
+  const [selectStatus, setSelectStatus] = useState<string>();
+
   const dispatch = useAppDispatch();
   const reduxRows = useSelector(
     (state: RootState) => state.currentBodyRows.allFilteredRows,
@@ -46,18 +46,16 @@ const Table = () => {
       dispatch(currentBodyRowsSlice.actions.setDisFilter(key));
     }
   };
-  // const [, updateState] = React.useState<any>();
-  // const forceUpdate = React.useCallback(() => updateState({}), []);
+
   const clearAllFilters = () => {
     setFilters({});
-    setSelectedOption(null);
+    setSelectStatus(null);
     elementRef.current = false;
-    // forceUpdate();
   };
   const handleSearch = (value: string, key: string) => {
     elementRef.current = true;
     if (key === 'status') {
-      setSelectedOption(value);
+      setSelectStatus(value);
     }
     if (value) {
       setFilters((prevFilters) => ({
@@ -72,12 +70,6 @@ const Table = () => {
       });
     }
   };
-
-  // useEffect(() => {
-  //   if (elementRef.current) {
-  //     setSelectedOption('');
-  //   }
-  // }, [selectedOption]);
 
   const iterableRows = (allRows: IRows[]) => {
     const initialState: IData = {};
@@ -94,12 +86,9 @@ const Table = () => {
     setAllRows(iterableRows(reduxRows));
   }, [reduxRows]);
 
-  const options = [
-    { value: '', label: 'all' },
-    { value: 'active', label: 'active' },
-    { value: 'archive', label: 'archive' },
-  ];
-
+  const inputVal = (value: string) => {
+    return elementRef.current ? value : '';
+  };
   return (
     <>
       <table>
@@ -113,33 +102,23 @@ const Table = () => {
                 onChange={(event) => handlerMainCheck(event.target.checked)}
               />
             </th>
-            {/* {elementRef.current.map((column) => { */}
             {columns.map((column) => {
-
               if (column.rowName === 'status') {
                 return (
                   <th key={column.id}>
-                    {/* <select
-                      value={city}
-                      onChange={(e) => cityChange(e.target.value)}
+                    <span>{column.label}</span>
+                    <select
+                      value={inputVal(selectStatus)}
+                      onChange={(e) =>
+                        handleSearch(e.target.value, column.rowName)
+                      }
                     >
-                      <option value='Bydgoszcz'>Bydgoszcz</option>
-                      <option value='Poznań'>Poznań</option>
-                      <option value='Koszalin'>Koszalin</option>
-                      <option value='Katowice'>Katowice</option>
-                    </select> */}
-                    <Select
-                      placeholder={'select status'}
-                      // defaultValue={{
-                      //   value: 'one',
-                      //   label: elementRef.current ? selectedOption : null,
-                      // }}
-                      defaultValue={selectedOption}
-                      onChange={(event) => {
-                        handleSearch(event.value, column.rowName);
-                      }}
-                      options={options}
-                    />
+                      {options.map((el) => (
+                        <option key={uuid()} value={el.value}>
+                          {el.label}
+                        </option>
+                      ))}
+                    </select>
                   </th>
                 );
               }
@@ -147,11 +126,9 @@ const Table = () => {
                 <th key={column.id}>
                   <span>{column.label}</span>
                   <input
-                    // ref={elementRef}
                     type='search'
                     placeholder={`Поиск по ${column.label}`}
-                    // value={filters[column.rowName]}
-                    value={elementRef.current ? filters[column.rowName] : ''}
+                    value={inputVal(filters[column.rowName])}
                     onChange={(event) =>
                       handleSearch(event.target.value, column.rowName)
                     }

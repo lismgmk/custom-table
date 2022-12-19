@@ -10,3 +10,9 @@ export const columns = [
   { rowName: 'currency', label: 'Валюта', id: uuid() },
   { rowName: 'all', label: 'Всего', id: uuid() },
 ];
+
+export const options = [
+  { value: '', label: 'Все сатусы' },
+  { value: 'active', label: 'Активные' },
+  { value: 'archive', label: 'Архив' },
+];

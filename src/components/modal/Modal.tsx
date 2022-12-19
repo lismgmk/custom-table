@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './styles/Modal.scss';
+import '@src/components/modal/styles/modal.scss';
 
 const Modal = ({
   isShowing,
@@ -44,13 +44,21 @@ const Modal = ({
               </div>
               <p>
                 Вы уверены что хотите аннулировать товар(ы):
-                <span> {allValues()}</span>
+                <br /> <span className='modal-goods'>{allValues()}</span>
               </p>
-              <div>
-                <button onClick={() => hide({ clear: true, param: true })}>
+              <div className='modal-button-container'>
+                <button
+                  className='button-action'
+                  onClick={() => hide({ clear: true, param: true })}
+                >
                   Применить
                 </button>
-                <button onClick={() => hide({ clear: true })}>Отклонить</button>
+                <button
+                  className='button-action'
+                  onClick={() => hide({ clear: true })}
+                >
+                  Отклонить
+                </button>
               </div>
             </div>
           </div>

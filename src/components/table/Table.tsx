@@ -7,6 +7,7 @@ import { IData, IRows } from '../../global-dto/data.interface';
 import { toDateUI } from '../../helpers/utils';
 import { columns, options } from './const-data/column';
 import { v4 as uuid } from 'uuid';
+import '@src/components/table/styles/table.scss'
 
 const Table = () => {
   const [allRows, setAllRows] = useState<IData>({});
@@ -175,6 +176,7 @@ const Table = () => {
         </tbody>
       </table>
       <button
+        className='button-clean'
         onClick={() => {
           clearAllFilters();
         }}

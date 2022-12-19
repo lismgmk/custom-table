@@ -8,13 +8,10 @@ import { cancelFetch, urls } from '../../server/utils';
 import useModal from '../modal/hooks/modal.hook';
 import Modal from '../modal/Modal';
 import Table from '../table/Table';
-import './Application.scss';
+import '@src/components/main-page/styles/appPage.scss';
 import { useFetchData } from './hooks/fetchData.hook';
 
-
-
 const AppPage = () => {
-   
   const { fetchData, loading } = useFetchData(urls);
 
   const [resultValues, setResultValues] = useState<{
@@ -66,14 +63,19 @@ const AppPage = () => {
     return <div>{fetchData.error}</div>;
   }
   return (
-    <div className='App'>
+    <div className='application'>
       <h1>Таблица товаров</h1>
       <Table />
-      <h3>Общее количесво : {resultValues.sumQnt}</h3>
-      <h3>Общий объем : {resultValues.sumVolume}</h3>
-      <button className='button-default' onClick={toggle}>
-        Аннулировать
-      </button>
+      <div className='application-footer'>
+        <div>
+          <h3>Общее количесво : {resultValues.sumQnt}</h3>
+          <h3>Общий объем : {resultValues.sumVolume}</h3>
+        </div>
+        <button className='button-default' onClick={toggle}>
+          Аннулировать
+        </button>
+      </div>
+
       <Modal
         reduxFilter={reduxFilter}
         isShowing={isShowing}

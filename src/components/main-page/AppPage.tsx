@@ -4,19 +4,17 @@ import { countEmont } from '../../helpers/countAmount';
 import { useAppDispatch } from '../../redux/hooks/reduxHooks';
 import { currentBodyRowsSlice } from '../../redux/slices/currentBodyRows';
 import { RootState } from '../../redux/store';
-import { cancelFetch } from '../../server/utils';
+import { cancelFetch, urls } from '../../server/utils';
 import useModal from '../modal/hooks/modal.hook';
 import Modal from '../modal/Modal';
 import Table from '../table/Table';
 import './Application.scss';
 import { useFetchData } from './hooks/fetchData.hook';
 
-const urls: string[] = [
-  'http://localhost:3000/documents1',
-  'http://localhost:3000/documents2',
-];
+
 
 const AppPage = () => {
+   
   const { fetchData, loading } = useFetchData(urls);
 
   const [resultValues, setResultValues] = useState<{
@@ -56,7 +54,7 @@ const AppPage = () => {
     }
     toggle();
   };
-  
+
   const reduxFilter = useSelector(
     (state: RootState) => state.currentBodyRows.filters,
   );

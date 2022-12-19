@@ -95,7 +95,7 @@ const Table = () => {
                   <span>{column.label}</span>
                   <input
                     type='search'
-                    placeholder={`Search ${column.label}`}
+                    placeholder={`Поиск по ${column.label}`}
                     value={filters[column.rowName]}
                     onChange={(event) =>
                       handleSearch(event.target.value, column.rowName)

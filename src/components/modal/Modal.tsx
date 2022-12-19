@@ -44,7 +44,7 @@ const Modal = ({
               </div>
               <p>
                 Вы уверены что хотите аннулировать товар(ы):
-                <pre> {allValues()}</pre>
+                <span> {allValues()}</span>
               </p>
               <div>
                 <button onClick={() => hide({ clear: true, param: true })}>

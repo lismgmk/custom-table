@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from '../../redux/hooks/reduxHooks';
 import { currentBodyRowsSlice } from '../../redux/slices/currentBodyRows';
@@ -11,7 +11,7 @@ import Select from 'react-select';
 
 const Table = () => {
   const [allRows, setAllRows] = useState<IData>({});
-
+  const [selectedOption, setSelectedOption] = useState(null);
   const dispatch = useAppDispatch();
   const reduxRows = useSelector(
     (state: RootState) => state.currentBodyRows.allFilteredRows,
@@ -25,7 +25,7 @@ const Table = () => {
   const [filters, setFilters] = useState<{
     [key: string]: string;
   }>({});
-
+  const elementRef = useRef(false);
   useEffect(() => {
     dispatch(currentBodyRowsSlice.actions.filterRows(filters));
   }, [filters]);
@@ -46,8 +46,16 @@ const Table = () => {
       dispatch(currentBodyRowsSlice.actions.setDisFilter(key));
     }
   };
-
+  // const [, updateState] = React.useState<any>();
+  // const forceUpdate = React.useCallback(() => updateState({}), []);
+  const clearAllFilters = () => {
+    setFilters({});
+    setSelectedOption(null);
+    elementRef.current = false;
+    // forceUpdate();
+  };
   const handleSearch = (value: string, key: string) => {
+    elementRef.current = true;
     if (key === 'status') {
       setSelectedOption(value);
     }
@@ -65,6 +73,12 @@ const Table = () => {
     }
   };
 
+  // useEffect(() => {
+  //   if (elementRef.current) {
+  //     setSelectedOption('');
+  //   }
+  // }, [selectedOption]);
+
   const iterableRows = (allRows: IRows[]) => {
     const initialState: IData = {};
     allRows.forEach((el) => {
@@ -79,12 +93,13 @@ const Table = () => {
   useEffect(() => {
     setAllRows(iterableRows(reduxRows));
   }, [reduxRows]);
+
   const options = [
     { value: '', label: 'all' },
     { value: 'active', label: 'active' },
     { value: 'archive', label: 'archive' },
   ];
-  const [selectedOption, setSelectedOption] = useState(null);
+
   return (
     <>
       <table>
@@ -98,12 +113,27 @@ const Table = () => {
                 onChange={(event) => handlerMainCheck(event.target.checked)}
               />
             </th>
+            {/* {elementRef.current.map((column) => { */}
             {columns.map((column) => {
+
               if (column.rowName === 'status') {
                 return (
                   <th key={column.id}>
+                    {/* <select
+                      value={city}
+                      onChange={(e) => cityChange(e.target.value)}
+                    >
+                      <option value='Bydgoszcz'>Bydgoszcz</option>
+                      <option value='Poznań'>Poznań</option>
+                      <option value='Koszalin'>Koszalin</option>
+                      <option value='Katowice'>Katowice</option>
+                    </select> */}
                     <Select
                       placeholder={'select status'}
+                      // defaultValue={{
+                      //   value: 'one',
+                      //   label: elementRef.current ? selectedOption : null,
+                      // }}
                       defaultValue={selectedOption}
                       onChange={(event) => {
                         handleSearch(event.value, column.rowName);
@@ -117,9 +147,11 @@ const Table = () => {
                 <th key={column.id}>
                   <span>{column.label}</span>
                   <input
+                    // ref={elementRef}
                     type='search'
                     placeholder={`Поиск по ${column.label}`}
-                    value={filters[column.rowName]}
+                    // value={filters[column.rowName]}
+                    value={elementRef.current ? filters[column.rowName] : ''}
                     onChange={(event) =>
                       handleSearch(event.target.value, column.rowName)
                     }
@@ -165,6 +197,13 @@ const Table = () => {
           })}
         </tbody>
       </table>
+      <button
+        onClick={() => {
+          clearAllFilters();
+        }}
+      >
+        Очистить все поисковые фильтры
+      </button>
     </>
   );
 };

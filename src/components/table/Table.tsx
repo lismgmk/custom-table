@@ -12,7 +12,9 @@ const Table = () => {
   const [allRows, setAllRows] = useState<IData>({});
 
   const dispatch = useAppDispatch();
-  const redux = useSelector((state: RootState) => state.currentBodyRows);
+  const reduxRows = useSelector(
+    (state: RootState) => state.currentBodyRows.allFilteredRows,
+  );
   const reduxMainCheckBox = useSelector(
     (state: RootState) => state.currentBodyRows.mainCheckBox,
   );
@@ -71,8 +73,8 @@ const Table = () => {
   };
 
   useEffect(() => {
-    setAllRows(iterableRows(redux.allFilteredRows));
-  }, [redux.allFilteredRows]);
+    setAllRows(iterableRows(reduxRows));
+  }, [reduxRows]);
 
   return (
     <>

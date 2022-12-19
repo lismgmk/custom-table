@@ -65,7 +65,6 @@ const AppPage = () => {
       dispatch(currentBodyRowsSlice.actions.setMainCheckBox(false));
     }
     if (options.param) {
-      console.log('senddd');
       await cancelFetch({ list: Object.keys(redux.filters) });
       if (options.clear) {
         dispatch(currentBodyRowsSlice.actions.setFilter({}));

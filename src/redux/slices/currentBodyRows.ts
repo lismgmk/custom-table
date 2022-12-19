@@ -109,7 +109,6 @@ export const currentBodyRowsSlice = createSlice({
           return payloadArr.every((item: keyof Omit<IRows, 'id'>) => {
             const value = row[item];
             const searchValue = action.payload[item];
-            console.log(action, isDate(value));
 
             if (isDate(value)) {
               return toDateUI(value).includes(searchValue);

@@ -1,17 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { isDate } from 'date-fns';
 import {
   EnNameColumns,
   IResponse,
   IRows,
-} from '../../components/dto/data.interface';
-import {
-  isDate,
-  isNumber,
-  isStrings,
-  toDateUI,
-  toLower,
-} from '../../components/helper';
-import { orderKey } from '../../components/helpers/orderHelper';
+} from '../../global-dto/data.interface';
+import { orderKey } from '../../helpers/orderHelper';
+import { toDateUI, isStrings, toLower, isNumber } from '../../helpers/utils';
+
 export interface IOneCheck {
   [key: string]: { value: boolean; name: string };
 }
@@ -32,7 +28,6 @@ export const currentBodyRowsSlice = createSlice({
   initialState,
   reducers: {
     setInitialRows: (state, action: { payload: IResponse[] }) => {
-
       action.payload.sort((a, b) => {
         return (
           Number(new Date(a.delivery_date)) - Number(new Date(b.delivery_date))
@@ -115,7 +110,7 @@ export const currentBodyRowsSlice = createSlice({
             const value = row[item];
             const searchValue = action.payload[item];
             console.log(action, isDate(value));
-            
+
             if (isDate(value)) {
               return toDateUI(value).includes(searchValue);
             }

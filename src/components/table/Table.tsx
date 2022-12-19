@@ -1,11 +1,10 @@
-import { format } from 'date-fns';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useAppDispatch } from '../redux/hooks/reduxHooks';
-import { currentBodyRowsSlice } from '../redux/slices/currentBodyRows';
-import { RootState } from '../redux/store';
-import { IData, IRows } from './dto/data.interface';
-import { toDateUI } from './helper';
+import { useAppDispatch } from '../../redux/hooks/reduxHooks';
+import { currentBodyRowsSlice } from '../../redux/slices/currentBodyRows';
+import { RootState } from '../../redux/store';
+import { IData, IRows } from '../../global-dto/data.interface';
+import { toDateUI } from '../../helpers/utils';
 
 const columns = [
   { rowName: 'name', label: 'Наименование' },

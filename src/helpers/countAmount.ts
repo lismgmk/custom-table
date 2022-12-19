@@ -1,4 +1,4 @@
-import { IRows } from '../dto/data.interface';
+import { IRows } from '../global-dto/data.interface';
 
 export const countEmont = (allRows: IRows[], key: string) => {
   return allRows.reduce(

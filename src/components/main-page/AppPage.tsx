@@ -1,19 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useAppDispatch } from '../redux/hooks/reduxHooks';
-import { currentBodyRowsSlice } from '../redux/slices/currentBodyRows';
-import { RootState } from '../redux/store';
-import useFetch from '../server/hooks/fetch.hook';
-import { cancelFetch } from '../server/utils';
+import { useAppDispatch } from '../../redux/hooks/reduxHooks';
+import { currentBodyRowsSlice } from '../../redux/slices/currentBodyRows';
+import { RootState } from '../../redux/store';
+import { cancelFetch } from '../../server/utils';
 import './Application.scss';
-import { IResponse } from './dto/data.interface';
-import { countEmont } from './helpers/countAmount';
-import useModal from './modal/hooks/modal.hook';
-import Modal from './modal/Modal';
-import './modal/styles/Modal.scss';
-import Table from './Table';
+import { IResponse } from '../../global-dto/data.interface';
+import useModal from '../modal/hooks/modal.hook';
+import Modal from '../modal/Modal';
+import Table from '../table/Table';
+import { countEmont } from '../../helpers/countAmount';
 
-const AppPage: React.FC = () => {
+const AppPage = () => {
   const [resultValues, setResultValues] = useState<{
     sumVolume: number;
     sumQnt: number;

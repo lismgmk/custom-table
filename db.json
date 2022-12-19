@@ -16,7 +16,7 @@
       "sum": 5,
       "qty": 10,
       "volume": 1000,
-      "name": "box1",
+      "name": "box2",
       "delivery_date": "Mon Dec 19 2021 00:42:46 GMT+0300 (Moscow Standard Time)",
       "currency": "USD"
     },
@@ -26,7 +26,7 @@
       "sum": 5,
       "qty": 10,
       "volume": 1000,
-      "name": "box1",
+      "name": "box3",
       "delivery_date": "Mon Dec 19 2020 00:42:46 GMT+0300 (Moscow Standard Time)",
       "currency": "USD"
     },
@@ -58,7 +58,7 @@
       "sum": 4546,
       "qty": 65,
       "volume": 1560,
-      "name": "box1",
+      "name": "box91",
       "delivery_date": "Mon Dec 19 2021 00:42:46 GMT+0300 (Moscow Standard Time)",
       "currency": "USD"
     },
@@ -68,7 +68,7 @@
       "sum": 565,
       "qty": 98,
       "volume": 90,
-      "name": "box1",
+      "name": "box231",
       "delivery_date": "Mon Dec 19 2020 00:42:46 GMT+0300 (Moscow Standard Time)",
       "currency": "RUB"
     },
@@ -78,7 +78,7 @@
       "sum": 565,
       "qty": 45,
       "volume": 56,
-      "name": "box1",
+      "name": "box10",
       "delivery_date": "Mon Dec 19 2015 00:42:46 GMT+0300 (Moscow Standard Time)",
       "currency": "USD"
     }

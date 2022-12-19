@@ -1,4 +1,4 @@
-import { EnNameColumns } from '../dto/data.interface';
+import { EnNameColumns } from '../global-dto/data.interface';
 
 export function orderKey(obj: Record<string, any>) {
   for (const n in EnNameColumns) {
